@@ -1,30 +1,36 @@
 package com.dev.objects;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table (name = "users")
+@Table(name = "users")
 public class UserObject {
-    @Column(name = "id")
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    public int UserId;
 
-    @Column(name = "username")
+    @Column
     private String username;
 
-    @Column(name = "password")
+    @Column
     private String password;
 
-    @Column(name = "token")
+    @Column
     private String token;
 
-    @Column(name = "login_tries")
-    private int login_tries;
+    @Column
+    private int login_tries = 5;
 
-    @Transient
-    private List<MessageObject> messages;
+
+    @ManyToMany
+    @JoinTable (name = "user_organization", joinColumns = {@JoinColumn(name="UserId")},
+    inverseJoinColumns = {@JoinColumn(name = "organizationId")})
+    Set<OrganizationObject> organizations = new HashSet<>();
+
 
     public String getUsername() {
         return username;
@@ -50,15 +56,26 @@ public class UserObject {
         this.token = token;
     }
 
-    public void addMessages (String message) {
-            addMessages(message);
+    public void addPost (String post) {
     }
 
-    public List<MessageObject> getPosts() {
-        return messages;
+
+
+    public int getUserId() {
+        return UserId;
     }
 
-    public void setPosts(List<MessageObject> posts) {
-        this.messages = posts;
+    public void setUserId(int UserId) {
+        this.UserId = UserId;
     }
+
+
+    public int getLogin_tries() {
+        return login_tries;
+    }
+
+    public void setLogin_tries(int login_tries) {
+        this.login_tries = login_tries;
+    }
+
 }

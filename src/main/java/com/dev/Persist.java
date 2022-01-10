@@ -1,13 +1,11 @@
 package com.dev;
 
-import com.dev.objects.MessageObject;
 import com.dev.objects.UserObject;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Component
 public class Persist {
@@ -108,23 +106,23 @@ public class Persist {
     }
 
     public boolean createAccount (UserObject userObject) {
-            boolean success = false;
-            try {
-                PreparedStatement preparedStatement = this.connection.prepareStatement(
-                        "INSERT INTO users (username, password, token) VALUE (?, ?, ?)");
-                preparedStatement.setString(1, userObject.getUsername());
-                preparedStatement.setString(2, userObject.getPassword());
-                preparedStatement.setString(3, userObject.getToken());
-               if (!this.doesUserExist(userObject.getUsername())){
-                   preparedStatement.executeUpdate();
+        boolean success = false;
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(
+                    "INSERT INTO users (username, password, token) VALUE (?, ?, ?)");
+            preparedStatement.setString(1, userObject.getUsername());
+            preparedStatement.setString(2, userObject.getPassword());
+            preparedStatement.setString(3, userObject.getToken());
+            if (!this.doesUserExist(userObject.getUsername())){
+                preparedStatement.executeUpdate();
                 success = true;
-               }
             }
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return success;
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
 
     public Integer getUserIdByToken (String token) {
         Integer id = null;
@@ -144,33 +142,6 @@ public class Persist {
 
 
 
-    public List<MessageObject> getAllMessagesByUser (String token) {
-        int userId = getUserIdByToken(token);
-        List<MessageObject> messageObjects = new ArrayList<>();
-
-        try {
-                PreparedStatement preparedStatement = this.connection.prepareStatement(
-                        "SELECT * FROM messages WHERE receiverId = ? ");
-                preparedStatement.setInt(1, userId);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    MessageObject messageObject = new MessageObject();
-
-                    messageObject.setMessageId(resultSet.getInt("id"));
-                    messageObject.setSenderId(getUsernameById(resultSet.getInt(("senderId"))).toString());
-                    messageObject.setReceiverId(resultSet.getInt("receiverId"));
-                    messageObject.setTitle(resultSet.getString("title"));
-                    messageObject.setMessage(resultSet.getString("message"));
-                    messageObject.setRead(resultSet.getInt("read"));
-                    messageObject.setSendDate(resultSet.getString("sendDate"));
-
-                    messageObjects.add(messageObject);
-                }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return messageObjects;
-    }
 
 
     public String getUsernameById(int id) {
@@ -192,11 +163,11 @@ public class Persist {
     public boolean deleteMessageById(int messageId) {
         boolean deleteSuccess = false;
         try{
-                PreparedStatement preparedStatement = this.connection.prepareStatement(
-                        "DELETE FROM messages WHERE id = ? ");
-                        preparedStatement.setInt(1, messageId);
-                         preparedStatement.executeUpdate();
-                         deleteSuccess = true;
+            PreparedStatement preparedStatement = this.connection.prepareStatement(
+                    "DELETE FROM messages WHERE id = ? ");
+            preparedStatement.setInt(1, messageId);
+            preparedStatement.executeUpdate();
+            deleteSuccess = true;
         }
         catch (SQLException e){
             e.printStackTrace();
