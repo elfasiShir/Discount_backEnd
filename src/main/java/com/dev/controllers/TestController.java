@@ -1,7 +1,6 @@
 package com.dev.controllers;
 
 import com.dev.Persist;
-import com.dev.objects.MessageObject;
 import com.dev.objects.UserObject;
 import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import java.util.Random;
 @RestController
 public class TestController {
     private List<UserObject> userObject;
-    private List<MessageObject> messageObjects;
 
     @Autowired
     private Persist persist;
@@ -56,10 +54,6 @@ public class TestController {
         return success;
     }
 
-    @RequestMapping ("get-all-messages")
-    public List<MessageObject> getAllMessagesByUser (String token) {
-    return persist.getAllMessagesByUser(token);
-    }
 
     @RequestMapping ("delete_message")
     public boolean deleteMessageById(int messageId){
