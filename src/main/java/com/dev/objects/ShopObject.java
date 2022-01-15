@@ -2,6 +2,8 @@ package com.dev.objects;
 
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Embeddable
 @Entity
@@ -20,7 +22,8 @@ public class ShopObject {
     @Column (name = "type")
     private String type;
 
-
+    @OneToMany
+    private Set<DiscountObject> discount = new HashSet<DiscountObject>();
 
     public int getId() {return shopId;}
 

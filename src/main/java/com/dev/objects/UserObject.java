@@ -1,8 +1,9 @@
 package com.dev.objects;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -11,7 +12,7 @@ public class UserObject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    public int UserId;
+    public int userId;
 
     @Column
     private String username;
@@ -23,13 +24,26 @@ public class UserObject {
     private String token;
 
     @Column
-    private int login_tries = 5;
+    private int login_tries ;
+
+
 
 
     @ManyToMany
     @JoinTable (name = "user_organization", joinColumns = {@JoinColumn(name="UserId")},
     inverseJoinColumns = {@JoinColumn(name = "organizationId")})
     Set<OrganizationObject> organizations = new HashSet<>();
+
+    public UserObject(String username, String password, String token) {
+        this.username= username;
+        this.password= password;
+        this.token = token;
+        this.login_tries = 5;
+    }
+
+    public UserObject() {
+
+    }
 
 
     public String getUsername() {
@@ -62,11 +76,11 @@ public class UserObject {
 
 
     public int getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(int UserId) {
-        this.UserId = UserId;
+        this.userId = UserId;
     }
 
 
@@ -77,5 +91,6 @@ public class UserObject {
     public void setLogin_tries(int login_tries) {
         this.login_tries = login_tries;
     }
+
 
 }

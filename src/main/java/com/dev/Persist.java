@@ -1,7 +1,10 @@
 package com.dev;
 
 import com.dev.objects.UserObject;
+import com.dev.utils.Utils;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,15 +32,67 @@ public class Persist {
         }
     }
 
-    public void countDownTries(String username){
-        try{
-            PreparedStatement preparedStatement = this.connection.prepareStatement(
-                    "UPDATE users SET login_tries = login_tries - 1 WHERE username = ?");
-            preparedStatement.setString(1, username);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
+    //הרשמה
+    public boolean signUp(String username, String password) {
+        boolean success = false;
+        if (doesUserExist(username)) {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            UserObject userObject = new UserObject(username, password, Utils.createHash(username, password));
+            session.save(userObject);
+            transaction.commit();
+            session.close();
+            if (userObject.getUserId() != 0) {
+                success = true;
+
+            }
         }
+        return success;
+    }
+
+    //כניסה
+    public String logIn(String username, String password) {
+        Session session = sessionFactory.openSession();
+        UserObject userObject = (UserObject) session.createQuery(
+                "FROM UserObject u WHERE u.username =:username AND u.password =:password")
+                .setParameter("username", username)
+                .setParameter("password", password)
+                .uniqueResult();
+        session.close();
+        if (userObject != null)
+            return userObject.getToken();
+        else
+            return null;
+    }
+
+    public UserObject getUserByToken (String token){
+        Session session = sessionFactory.openSession();
+        UserObject userObject = (UserObject) session.createQuery(
+                "FROM UserObject u WHERE u.token = :token")
+                .setParameter("token",token)
+                .uniqueResult();
+        session.close();
+        return userObject;
+    }
+    public UserObject getUserByUsername (String username){
+        Session session = sessionFactory.openSession();
+        UserObject userObject = (UserObject) session.createQuery(
+                        "FROM UserObject u WHERE u.username = :username")
+                .setParameter("username",username)
+                .uniqueResult();
+        session.close();
+        return userObject;
+    }
+
+
+    public void countDownTries(String username){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        UserObject userObject = getUserByUsername (username);
+        int loginTries = userObject.getLogin_tries()-1;
+        userObject.setLogin_tries(loginTries);
+        transaction.commit();
+        session.close();
     }
     public int isBlocked(String username){
         //returns number of tries 0 is blocked
@@ -235,4 +290,8 @@ public class Persist {
         }catch (SQLException e) { e.printStackTrace(); }
         return receiverId;
     }
+
+
+
+
 }

@@ -2,10 +2,12 @@ package com.dev.controllers;
 
 import com.dev.Persist;
 import com.dev.objects.UserObject;
+import com.dev.utils.MessagesHandler;
 import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
@@ -19,21 +21,33 @@ import java.util.Random;
 
 @RestController
 public class TestController {
-    private List<UserObject> userObject;
 
     @Autowired
     private Persist persist;
+    private MessagesHandler messagesHandler;
+
+
+    public TestController(MessagesHandler messagesHandler) {
+        this.messagesHandler = messagesHandler;
+    }
+
 
     @PostConstruct
     private void init () {
         persist.createConnectionToDatabase();
     }
 
-    @RequestMapping("sign-in")
-    public String signIn (String username, String password) {
-        String token = persist.getTokenByUsernameAndPassword(username, password);
-        return token;
+    //הרשמה
+    @RequestMapping(value ="sign-up", method = RequestMethod.POST)
+    public boolean signUn (@RequestParam String username, String password) {
+        return persist.signUp(username, password);
     }
+    //להתחבר
+    @RequestMapping(value = "log-in")
+    public String logIn (String username , String password){
+        return persist.logIn(username,password);
+    }
+
 
     @RequestMapping("doesUsernameExists")
     public boolean doesUsernameExists(String username){

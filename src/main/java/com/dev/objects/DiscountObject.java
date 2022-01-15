@@ -2,8 +2,8 @@
 package com.dev.objects;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -19,27 +19,24 @@ public class DiscountObject {
     @Column
     private String discount;
 
-    @Column
-    private String discountStart;
 
     @Column
-    private String discountEnd;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date discountStart;
 
     @Column
-    private boolean validForEveryone;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date discountEnd;
+
+    @Column
+    private int validForEveryone = 0;
+
+
 
     @ManyToMany
-    @JoinTable (name = "organization_discount", joinColumns = {@JoinColumn(name="operationId")},
+    @JoinTable (name = "organization_discount", joinColumns = {@JoinColumn(name="discountId")},
             inverseJoinColumns = {@JoinColumn(name = "organizationId")})
     Set<OrganizationObject> organization = new HashSet<>();
-
-
-    public void setOrganizations(List<OrganizationObject> organizations) {
-        this.organizations = organizations;
-    }
-
-    @Transient
-    private List<OrganizationObject> organizations;
 
 
 
@@ -59,27 +56,27 @@ public class DiscountObject {
         this.discount = discount;
     }
 
-    public String getDiscountStart() {
+    public Date getDiscountStart() {
         return discountStart;
     }
 
-    public void setDiscountStart(String discountStart) {
+    public void setDiscountStart(Date discountStart) {
         this.discountStart = discountStart;
     }
 
-    public String getDiscountEnd() {
+    public Date getDiscountEnd() {
         return discountEnd;
     }
 
-    public void setDiscountEnd(String discountEnd) {
-        this.discountEnd = discountEnd;
+    public void setDiscountEnd(Date discountEnd) {
+        this.discountEnd = this.discountEnd;
     }
 
-    public boolean isValidForEveryone() {
+    public int getValidForEveryone() {
         return validForEveryone;
     }
 
-    public void setValidForEveryone(boolean validForEveryone) {
+    public void setValidForEveryone(int validForEveryone) {
         this.validForEveryone = validForEveryone;
     }
 

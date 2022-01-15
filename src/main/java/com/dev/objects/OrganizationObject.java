@@ -21,14 +21,6 @@ public class OrganizationObject {
 
 
 
-    public void setOperations(List<DiscountObject> operations) {
-        this.operations = operations;
-    }
-
-    @Transient
-    private List<DiscountObject> operations;
-
-
     @ManyToMany
     @JoinTable (name = "user_organization", joinColumns = {@JoinColumn(name="organizationId")},
             inverseJoinColumns = {@JoinColumn(name = "userId")})
@@ -36,10 +28,16 @@ public class OrganizationObject {
 
     @ManyToMany
     @JoinTable (name = "organization_discount", joinColumns = {@JoinColumn(name="organizationId")},
-            inverseJoinColumns = {@JoinColumn(name = "operationId")})
+            inverseJoinColumns = {@JoinColumn(name = "discountId")})
     Set<DiscountObject> operation = new HashSet<>();
 
 
+
+    //contactor
+    public OrganizationObject (OrganizationObject organizations){
+        this.organizationId = organizations.getOrganizationId();
+        this.organizationName = organizations.getOrganizationName();
+    }
 
     public int getOrganizationId() {return organizationId; }
 
