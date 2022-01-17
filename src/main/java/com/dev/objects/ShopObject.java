@@ -13,13 +13,13 @@ public class ShopObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column
     public int shopId;
 
-    @Column (name = "shopName")
+    @Column
     private String shopName;
 
-    @Column (name = "type")
+    @Column
     private String type;
 
     @OneToMany

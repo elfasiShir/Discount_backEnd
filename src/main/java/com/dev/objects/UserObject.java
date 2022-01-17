@@ -28,11 +28,12 @@ public class UserObject {
 
 
 
-
     @ManyToMany
-    @JoinTable (name = "user_organization", joinColumns = {@JoinColumn(name="UserId")},
-    inverseJoinColumns = {@JoinColumn(name = "organizationId")})
-    Set<OrganizationObject> organizations = new HashSet<>();
+    @JoinTable (name = "user_organization",
+            joinColumns = {@JoinColumn(name="UserId")},
+            inverseJoinColumns = {@JoinColumn(name = "organizationId")})
+    Set<OrganizationObject> userInOrganization;
+
 
     public UserObject(String username, String password, String token) {
         this.username= username;
@@ -40,6 +41,8 @@ public class UserObject {
         this.token = token;
         this.login_tries = 5;
     }
+
+
 
     public UserObject() {
 
@@ -93,4 +96,11 @@ public class UserObject {
     }
 
 
+    public Set<OrganizationObject> getUserInOrganization() {
+        return userInOrganization;
+    }
+
+    public void setUserInOrganization(Set<OrganizationObject> userInOrganization) {
+        this.userInOrganization = userInOrganization;
+    }
 }

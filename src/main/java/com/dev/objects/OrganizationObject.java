@@ -20,16 +20,15 @@ public class OrganizationObject {
     private String organizationName;
 
 
+    @ManyToMany
+    @JoinTable (name = "user_organization",
+            joinColumns = {@JoinColumn(name="organizationId")},
+            inverseJoinColumns = {@JoinColumn(name = "UserId")})
+    Set<UserObject> userInOrganization;
 
     @ManyToMany
-    @JoinTable (name = "user_organization", joinColumns = {@JoinColumn(name="organizationId")},
-            inverseJoinColumns = {@JoinColumn(name = "userId")})
-    Set<UserObject> users = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable (name = "organization_discount", joinColumns = {@JoinColumn(name="organizationId")},
-            inverseJoinColumns = {@JoinColumn(name = "discountId")})
-    Set<DiscountObject> operation = new HashSet<>();
+     (mappedBy = "discountForOrganization")
+    Set<DiscountObject> discountId;
 
 
 
@@ -37,6 +36,10 @@ public class OrganizationObject {
     public OrganizationObject (OrganizationObject organizations){
         this.organizationId = organizations.getOrganizationId();
         this.organizationName = organizations.getOrganizationName();
+    }
+
+    public OrganizationObject() {
+
     }
 
     public int getOrganizationId() {return organizationId; }
@@ -48,4 +51,20 @@ public class OrganizationObject {
     public void setOrganizationName(String organizationName) { this.organizationName = organizationName; }
 
 
+
+    public Set<DiscountObject> getDiscountId() {
+        return discountId;
+    }
+
+    public void setDiscountId(Set<DiscountObject> discountId) {
+        this.discountId = discountId;
+    }
+
+    public Set<UserObject> getUserInOrganization() {
+        return userInOrganization;
+    }
+
+    public void setUserInOrganization(Set<UserObject> userInOrganization) {
+        this.userInOrganization = userInOrganization;
+    }
 }

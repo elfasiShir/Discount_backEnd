@@ -1,9 +1,9 @@
 package com.dev.controllers;
 
 import com.dev.Persist;
-import com.dev.objects.UserObject;
+import com.dev.objects.OrganizationObject;
+import com.dev.objects.ShopObject;
 import com.dev.utils.MessagesHandler;
-import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,12 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.DatatypeConverter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 @RestController
@@ -43,58 +38,50 @@ public class TestController {
         return persist.signUp(username, password);
     }
     //להתחבר
-    @RequestMapping(value = "log-in")
+    @RequestMapping(value = "log-in" , method = RequestMethod.GET)
     public String logIn (String username , String password){
         return persist.logIn(username,password);
     }
 
 
-    @RequestMapping("doesUsernameExists")
+    @RequestMapping(value ="doesUsernameTaken",  method = RequestMethod.GET)
     public boolean doesUsernameExists(String username){
-        return persist.doesUsernameExists(username);
+        return persist.doesUsernameTaken(username);
     }
 
-    @RequestMapping("create-account")
-    public boolean createAccount (String username, String password) {
-        boolean success = false;
-        if(!persist.doesUsernameExists(username)){
-            UserObject userObjects = new UserObject();
-            userObjects.setUsername(username);
-            userObjects.setPassword(password);
-            String hash = Utils.createHash(username, password);
-            userObjects.setToken(hash);
-            success = persist.createAccount(userObjects);
-        }
-        return success;
-    }
-
-
-    @RequestMapping ("delete_message")
-    public boolean deleteMessageById(int messageId){
-        return persist.deleteMessageById(messageId);
-    }
-
-    @RequestMapping ("Message_was_read")
-    public boolean MessageWasRead(int messageId) {
-        return persist.MessageWasRead(messageId);
-    }
-
-    @RequestMapping("add-message")
-    public boolean addMessage(String token,String receiverPhone,  String title,String content) {
-        return persist.addMessage(token,receiverPhone,title,content);
-    }
-    @RequestMapping("countDownTries")
+    @RequestMapping(value ="countDownTries", method = RequestMethod.POST)
     public void countDownTries(String username){
         persist.countDownTries(username);
     }
 
-    @RequestMapping("isBlocked")
+    @RequestMapping(value ="isBlocked" , method = RequestMethod.GET)
     public int isBlocked(String username){
         return persist.isBlocked(username);
     }
-    @RequestMapping("updateLoginTries")
+
+    @RequestMapping(value ="updateLoginTries", method = RequestMethod.POST)
     public void updateLoginTries(String username){
         persist.updateLoginTries(username);
+    }
+
+    @RequestMapping(value ="get_organization_by_id" , method = RequestMethod.GET)
+    public OrganizationObject getOrganizationById (int id){
+        return persist.getOrganizationById( id);
+    }
+
+    @RequestMapping(value ="get_all_organizations" , method = RequestMethod.GET)
+    public List<OrganizationObject> gatAllOrganizations(){
+            return persist.gatAllOrganizations();
+    }
+
+    @RequestMapping(value ="get_all_shopes" , method = RequestMethod.GET)
+    public List<ShopObject> getAllShops (){
+            return persist.getAllShops ();
+    }
+
+    @RequestMapping(value ="add_user_to_organization", method = RequestMethod.POST)
+    public void addUseToOrganization(String token, int organizationId){
+        persist.addUseToOrganization(token, organizationId);
     }
 
 }

@@ -34,9 +34,10 @@ public class DiscountObject {
 
 
     @ManyToMany
-    @JoinTable (name = "organization_discount", joinColumns = {@JoinColumn(name="discountId")},
+    @JoinTable (name = "organization_discount",
+            joinColumns = {@JoinColumn(name="discountId")},
             inverseJoinColumns = {@JoinColumn(name = "organizationId")})
-    Set<OrganizationObject> organization = new HashSet<>();
+    Set<OrganizationObject> discountForOrganization;
 
 
 
@@ -80,6 +81,13 @@ public class DiscountObject {
         this.validForEveryone = validForEveryone;
     }
 
+    public Set<OrganizationObject> getDiscountForOrganization() {
+        return discountForOrganization;
+    }
+
+    public void setDiscountForOrganization(Set<OrganizationObject> discountForOrganization) {
+        this.discountForOrganization = discountForOrganization;
+    }
 
 
 
