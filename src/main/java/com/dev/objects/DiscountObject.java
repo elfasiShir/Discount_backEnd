@@ -1,6 +1,8 @@
 
 package com.dev.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,8 +10,8 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "discount")
-public class DiscountObject {
+@Table(name = "discounts")
+public abstract class DiscountObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +34,21 @@ public class DiscountObject {
     private int validForEveryone = 0;
 
 
-
-    @ManyToMany
-    @JoinTable (name = "organization_discount",
-            joinColumns = {@JoinColumn(name="discountId")},
-            inverseJoinColumns = {@JoinColumn(name = "organizationId")})
-    Set<OrganizationObject> discountForOrganization;
-
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade= {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
+            targetEntity = OrganizationObject.class)
+    @JoinTable(name="discount_Organization",
+            joinColumns=@JoinColumn(name="discountId"),
+            inverseJoinColumns=@JoinColumn(name="organizationId"),
+            uniqueConstraints =@UniqueConstraint(columnNames =  {"discountId", "organizationId"}))
+    @JsonIgnoreProperties("discounts")
+    private Set<OrganizationObject> organizations = new HashSet<>();
 
 
     public int getDiscountId() {
@@ -81,16 +91,15 @@ public class DiscountObject {
         this.validForEveryone = validForEveryone;
     }
 
-    public Set<OrganizationObject> getDiscountForOrganization() {
-        return discountForOrganization;
+
+    public Set<OrganizationObject> getOrganizations() {
+        return organizations;
     }
 
-    public void setDiscountForOrganization(Set<OrganizationObject> discountForOrganization) {
-        this.discountForOrganization = discountForOrganization;
+    public void setOrganizations(Set<OrganizationObject> organizations) {
+        this.organizations = organizations;
     }
 
-
-
-
+    public abstract Set<DiscountObject> getDiscounts();
 }
 

@@ -1,13 +1,14 @@
 package com.dev.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "organizations")
-public class OrganizationObject {
+public class OrganizationObject extends DiscountObject {
 
 
 
@@ -19,16 +20,37 @@ public class OrganizationObject {
     @Column
     private String organizationName;
 
+    @Transient
+    boolean member;
 
-    @ManyToMany
-    @JoinTable (name = "user_organization",
-            joinColumns = {@JoinColumn(name="organizationId")},
-            inverseJoinColumns = {@JoinColumn(name = "UserId")})
-    Set<UserObject> userInOrganization;
 
-    @ManyToMany
-     (mappedBy = "discountForOrganization")
-    Set<DiscountObject> discountId;
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade= {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
+            targetEntity = UserObject.class,
+            mappedBy = "organizations")
+    @JsonIgnoreProperties("organizations")
+    private Set<UserObject> users = new HashSet<>();
+
+
+
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade= {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
+            targetEntity = DiscountObject.class,
+            mappedBy = "organizations")
+    @JsonIgnoreProperties("organizations")
+    private Set<DiscountObject> discounts = new HashSet<>();
 
 
 
@@ -42,6 +64,7 @@ public class OrganizationObject {
 
     }
 
+
     public int getOrganizationId() {return organizationId; }
 
     public void setOrganizationId(int organizationId) { this.organizationId = organizationId; }
@@ -50,21 +73,30 @@ public class OrganizationObject {
 
     public void setOrganizationName(String organizationName) { this.organizationName = organizationName; }
 
-
-
-    public Set<DiscountObject> getDiscountId() {
-        return discountId;
+    public boolean isMember() {
+        return member;
     }
 
-    public void setDiscountId(Set<DiscountObject> discountId) {
-        this.discountId = discountId;
+    public void setMember(boolean member) {
+        this.member = member;
     }
 
-    public Set<UserObject> getUserInOrganization() {
-        return userInOrganization;
+
+    public Set<UserObject> getUsers() {
+        return users;
     }
 
-    public void setUserInOrganization(Set<UserObject> userInOrganization) {
-        this.userInOrganization = userInOrganization;
+    public void setUsers(Set<UserObject> users) {
+        this.users = users;
+    }
+
+
+    @Override
+    public Set<DiscountObject> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(Set<DiscountObject> discounts) {
+        this.discounts = discounts;
     }
 }

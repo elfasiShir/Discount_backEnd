@@ -1,5 +1,6 @@
 package com.dev.objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -27,12 +28,21 @@ public class UserObject {
     private int login_tries ;
 
 
-
-    @ManyToMany
-    @JoinTable (name = "user_organization",
-            joinColumns = {@JoinColumn(name="UserId")},
-            inverseJoinColumns = {@JoinColumn(name = "organizationId")})
-    Set<OrganizationObject> userInOrganization;
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade= {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
+            targetEntity = OrganizationObject.class)
+    @JoinTable(name="user_Organization",
+            joinColumns=@JoinColumn(name="userId"),
+            inverseJoinColumns=@JoinColumn(name="organizationId"),
+            uniqueConstraints =@UniqueConstraint(columnNames =  {"userId", "organizationId"}))
+    @JsonIgnoreProperties("users")
+    private Set<OrganizationObject> organizations = new HashSet<>();
 
 
     public UserObject(String username, String password, String token) {
@@ -96,11 +106,12 @@ public class UserObject {
     }
 
 
-    public Set<OrganizationObject> getUserInOrganization() {
-        return userInOrganization;
+    public Set<OrganizationObject> getOrganizations() {
+        return organizations;
     }
 
-    public void setUserInOrganization(Set<OrganizationObject> userInOrganization) {
-        this.userInOrganization = userInOrganization;
+    public void setOrganizations(Set<OrganizationObject> organizations) {
+        this.organizations = organizations;
     }
+
 }
