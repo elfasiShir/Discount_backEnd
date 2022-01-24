@@ -8,12 +8,12 @@ import com.dev.utils.Utils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -156,19 +156,25 @@ public class Persist {
     }
 
     // get all organizations
-    public List<OrganizationObject> gatAllOrganizations() {
+    public JSONArray gatAllOrganizations() {
+        JSONArray organization ;
+       organization= (JSONArray) sessionFactory.openSession().createQuery("FROM OrganizationObject ").list();
 
-        return sessionFactory.openSession().createQuery("FROM OrganizationObject ").list();
+        return organization;
+    }
+
+
+    public JSONArray getAllShops (){
+        JSONArray shops ;
+        shops = (JSONArray) sessionFactory.openSession().createQuery("FROM ShopObject ").list();
+        return shops;
 
     }
 
-    public List<ShopObject> getAllShops (){
-        return sessionFactory.openSession().createQuery("FROM ShopObject ").list();
-
-    }
-
-    public List<DiscountObject> getAllDiscounts (){
-        return sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
+    public JSONArray getAllDiscounts (){
+        JSONArray discounts ;
+        discounts = (JSONArray)sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
+        return discounts;
 
     }
 

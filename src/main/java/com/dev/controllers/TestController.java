@@ -3,9 +3,9 @@ package com.dev.controllers;
 import com.dev.Persist;
 import com.dev.objects.DiscountObject;
 import com.dev.objects.OrganizationObject;
-import com.dev.objects.ShopObject;
 import com.dev.objects.UserObject;
 import com.dev.utils.MessagesHandler;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,17 +72,17 @@ public class TestController {
     }
 
     @RequestMapping(value ="get_all_organizations" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizations(){
+    public JSONArray gatAllOrganizations(){
             return persist.gatAllOrganizations();
     }
 
     @RequestMapping(value ="get_all_shops" , method = RequestMethod.GET)
-    public List<ShopObject> getAllShops (){
+    public JSONArray getAllShops (){
             return persist.getAllShops ();
     }
 
     @RequestMapping(value ="get_all_discounts" , method = RequestMethod.GET)
-    public List<DiscountObject> getAllDiscounts (){
+    public JSONArray getAllDiscounts (){
         return persist.getAllDiscounts ();
     }
 
@@ -104,8 +104,10 @@ public class TestController {
     }
     @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
     public List<DiscountObject> gatAllDiscountsForUser(String token){
+
         return persist.gatAllDiscountsForUser(token);
     }
+
     @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
     public boolean doseUserBelongToOrganization (String token , int organizationId){
         return persist.doseUserBelongToOrganization(token, organizationId);
