@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -202,15 +203,20 @@ public class Persist {
     }
 
 
-    public List<OrganizationObject> gatAllOrganizationsByUser(String token) {
-        Session session = sessionFactory.openSession();
+    public List<OrganizationObject> gatAllOrganizationsForUser(String token) {
         UserObject user = getUserByToken(token);
-
         List<OrganizationObject> organizations = (List<OrganizationObject>) user.getOrganizations();
-
-
         return organizations;
 
+    }
+    public List<DiscountObject> gatAllDiscountsForUser(String token) {
+        UserObject user = getUserByToken(token);
+        List<DiscountObject> discounts = null;
+        List<OrganizationObject> organizations = (List<OrganizationObject>) user.getOrganizations();
+        for (OrganizationObject organization : organizations ){
+            discounts.addAll(organization.getDiscounts());
+        }
+        return discounts;
     }
 
     public boolean doseUserBelongToOrganization (String token , int organizationId){

@@ -99,8 +99,12 @@ public class TestController {
         persist.addDiscountToOrganization(discountId, organizationId);
     }
     @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizationsByUser(String token){
-        return persist.gatAllOrganizationsByUser(token);
+    public List<OrganizationObject> gatAllOrganizationsForUser(String token){
+        return persist.gatAllOrganizationsForUser(token);
+    }
+    @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
+    public List<DiscountObject> gatAllDiscountsForUser(String token){
+        return persist.gatAllDiscountsForUser(token);
     }
     @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
     public boolean doseUserBelongToOrganization (String token , int organizationId){
