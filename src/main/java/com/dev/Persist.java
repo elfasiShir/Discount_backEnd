@@ -1,5 +1,6 @@
 package com.dev;
 
+import com.dev.objects.DiscountObject;
 import com.dev.objects.OrganizationObject;
 import com.dev.objects.ShopObject;
 import com.dev.objects.UserObject;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -164,7 +166,12 @@ public class Persist {
 
     }
 
-    public void addUseToOrganization(String token, int organizationId){
+    public List<DiscountObject> getAllDiscounts (){
+        return sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
+
+    }
+
+    public void addUserToOrganization(String token, int organizationId){
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         UserObject user = (UserObject)
@@ -172,11 +179,72 @@ public class Persist {
                         .setParameter("token", token).getSingleResult();
         OrganizationObject organization = session.load(OrganizationObject.class, organizationId);
         if(user != null && organization != null){
-            user.getUserInOrganization().add(getOrganizationById(organizationId));
-            organization.getUserInOrganization().add(getUserByToken(token));
+            user.getOrganizations().add(organization);
+            organization.getUsers().add(user);
         }
         transaction.commit();
         session.close();
     }
 
+    public void deleteUserFromOrganization(String token, int organizationId){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        UserObject user = (UserObject)
+                session.createQuery("FROM UserObject WHERE token =: token ")
+                        .setParameter("token", token).getSingleResult();
+        OrganizationObject organization = session.load(OrganizationObject.class, organizationId);
+        if(user != null && organization != null){
+            user.getOrganizations().remove(organization);
+            organization.getUsers().remove(user);
+        }
+        transaction.commit();
+        session.close();
+    }
+
+
+    public List<OrganizationObject> gatAllOrganizationsByUser(String token) {
+        Session session = sessionFactory.openSession();
+        UserObject user = getUserByToken(token);
+
+        List<OrganizationObject> organizations = (List<OrganizationObject>) user.getOrganizations();
+
+
+        return organizations;
+
+    }
+
+    public boolean doseUserBelongToOrganization (String token , int organizationId){
+       UserObject user = getUserByToken(token);
+       return user.getOrganizations().contains(getOrganizationById(organizationId)) ;
+    }
+
+    public void addDiscountToOrganization(int discountId, int organizationId){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        DiscountObject discount = (DiscountObject)
+                session.createQuery("FROM DiscountObject WHERE discountId =: discountId ")
+                        .setParameter("discountId", discountId).getSingleResult();
+
+        OrganizationObject organization = (OrganizationObject)
+                session.createQuery("FROM OrganizationObject WHERE organizationId =: organizationId ")
+                .setParameter("organizationId", organizationId).getSingleResult();
+
+        if(discount != null && organization != null){
+            discount.getOrganizations().add(organization);
+            organization.getDiscounts().add(discount);
+        }
+        transaction.commit();
+        session.close();
+    }
+
+
+    public List<UserObject> getUsersToSendDiscountNotification (DiscountObject discount) {
+        List<UserObject> userObjectList = null;
+        Set<OrganizationObject> organizations = discount.getOrganizations();
+        for (OrganizationObject organization : organizations ){
+         userObjectList.addAll(organization.getUsers());
+        }
+        userObjectList.clear();
+     return userObjectList;
+    }
 }

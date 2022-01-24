@@ -25,13 +25,14 @@ public class ShopObject {
     @OneToMany
     private Set<DiscountObject> discount = new HashSet<DiscountObject>();
 
+
     public int getId() {return shopId;}
 
     public void setId(int id) {this.shopId = id;}
 
     public String getShopName() {return shopName;}
 
-    public void setShopName(String shopname) {this.shopName = shopname;}
+    public void setShopName(String shopName) {this.shopName = shopName;}
 
     public String getType() {return type;}
 

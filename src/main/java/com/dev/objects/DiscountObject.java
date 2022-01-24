@@ -23,6 +23,9 @@ public abstract class DiscountObject {
 
 
     @Column
+    private String discountShop;
+
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
     private Date discountStart;
 
@@ -67,6 +70,13 @@ public abstract class DiscountObject {
         this.discount = discount;
     }
 
+    public String getDiscountShop() {
+        return discountShop;
+    }
+
+    public void setDiscountShop(String discountShop) {
+        this.discountShop = discountShop;
+    }
     public Date getDiscountStart() {
         return discountStart;
     }

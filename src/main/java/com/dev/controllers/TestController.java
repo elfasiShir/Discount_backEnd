@@ -1,8 +1,10 @@
 package com.dev.controllers;
 
 import com.dev.Persist;
+import com.dev.objects.DiscountObject;
 import com.dev.objects.OrganizationObject;
 import com.dev.objects.ShopObject;
+import com.dev.objects.UserObject;
 import com.dev.utils.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,14 +76,40 @@ public class TestController {
             return persist.gatAllOrganizations();
     }
 
-    @RequestMapping(value ="get_all_shopes" , method = RequestMethod.GET)
+    @RequestMapping(value ="get_all_shops" , method = RequestMethod.GET)
     public List<ShopObject> getAllShops (){
             return persist.getAllShops ();
     }
 
+    @RequestMapping(value ="get_all_discounts" , method = RequestMethod.GET)
+    public List<DiscountObject> getAllDiscounts (){
+        return persist.getAllDiscounts ();
+    }
+
     @RequestMapping(value ="add_user_to_organization", method = RequestMethod.POST)
     public void addUseToOrganization(String token, int organizationId){
-        persist.addUseToOrganization(token, organizationId);
+        persist.addUserToOrganization(token, organizationId);
     }
+    @RequestMapping(value ="delete_user_from_organization", method = RequestMethod.POST)
+    public void deleteUserFromOrganization(String token, int organizationId){
+        persist.deleteUserFromOrganization(token, organizationId);
+    }
+    @RequestMapping(value ="add_discount_to_organization", method = RequestMethod.POST)
+    public void addDiscountToOrganization(int discountId, int organizationId){
+        persist.addDiscountToOrganization(discountId, organizationId);
+    }
+    @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
+    public List<OrganizationObject> gatAllOrganizationsByUser(String token){
+        return persist.gatAllOrganizationsByUser(token);
+    }
+    @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
+    public boolean doseUserBelongToOrganization (String token , int organizationId){
+        return persist.doseUserBelongToOrganization(token, organizationId);
+    }
+    @RequestMapping(value ="get_users_to_send_discount_notification" , method = RequestMethod.GET)
+    public List<UserObject> getUsersToSendDiscountNotification (DiscountObject discount) {
+        return persist.getUsersToSendDiscountNotification(discount);
+    }
+
 
 }
