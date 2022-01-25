@@ -37,13 +37,12 @@ public class UserObject {
                     CascadeType.PERSIST
             },
             targetEntity = OrganizationObject.class)
-    @JoinTable(name="user_Organization",
+    @JoinTable(name="users_Organizations",
             joinColumns=@JoinColumn(name="userId"),
             inverseJoinColumns=@JoinColumn(name="organizationId"),
             uniqueConstraints =@UniqueConstraint(columnNames =  {"userId", "organizationId"}))
     @JsonIgnoreProperties("users")
     private Set<OrganizationObject> organizations = new HashSet<>();
-
 
     public UserObject(String username, String password, String token) {
         this.username= username;

@@ -3,9 +3,10 @@ package com.dev.controllers;
 import com.dev.Persist;
 import com.dev.objects.DiscountObject;
 import com.dev.objects.OrganizationObject;
+import com.dev.objects.ShopObject;
 import com.dev.objects.UserObject;
 import com.dev.utils.MessagesHandler;
-import org.json.JSONArray;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,25 +14,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @RestController
 public class TestController {
-
+    private final MessagesHandler messagesHandler;
     @Autowired
     private Persist persist;
-    private MessagesHandler messagesHandler;
 
 
     public TestController(MessagesHandler messagesHandler) {
         this.messagesHandler = messagesHandler;
     }
 
-
     @PostConstruct
     private void init () {
-        persist.createConnectionToDatabase();
     }
 
     //הרשמה
@@ -72,18 +71,22 @@ public class TestController {
     }
 
     @RequestMapping(value ="get_all_organizations" , method = RequestMethod.GET)
-    public JSONArray gatAllOrganizations(){
+    public List<OrganizationObject> gatAllOrganizations(){
             return persist.gatAllOrganizations();
     }
 
     @RequestMapping(value ="get_all_shops" , method = RequestMethod.GET)
-    public JSONArray getAllShops (){
+    public List<ShopObject> getAllShops (){
             return persist.getAllShops ();
     }
 
     @RequestMapping(value ="get_all_discounts" , method = RequestMethod.GET)
-    public JSONArray getAllDiscounts (){
+    public List<DiscountObject> getAllDiscounts (){
         return persist.getAllDiscounts ();
+    }
+    @RequestMapping(value ="get_all_discounts_to_table" , method = RequestMethod.GET)
+    public List<ArrayList<String>> getAllDOS (){
+        return persist.getAllDOS ();
     }
 
     @RequestMapping(value ="add_user_to_organization", method = RequestMethod.POST)
@@ -99,14 +102,15 @@ public class TestController {
         persist.addDiscountToOrganization(discountId, organizationId);
     }
     @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizationsForUser(String token){
+    public List<OrganizationObject> gatAllOrganizationsForUser(String token) throws JsonProcessingException {
         return persist.gatAllOrganizationsForUser(token);
     }
     @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
-    public List<DiscountObject> gatAllDiscountsForUser(String token){
+    public List<DiscountObject> gatAllDiscountsForUser(String token) throws JsonProcessingException {
 
         return persist.gatAllDiscountsForUser(token);
     }
+
 
     @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
     public boolean doseUserBelongToOrganization (String token , int organizationId){

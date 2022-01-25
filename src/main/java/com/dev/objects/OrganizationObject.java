@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "organizations")
-public class OrganizationObject extends DiscountObject {
+public class OrganizationObject  {
 
 
 
@@ -39,20 +39,9 @@ public class OrganizationObject extends DiscountObject {
 
 
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade= {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.PERSIST
-            },
-            targetEntity = DiscountObject.class,
-            mappedBy = "organizations")
-    @JsonIgnoreProperties("organizations")
-    private Set<DiscountObject> discounts = new HashSet<>();
-
-
+    @OneToMany
+    @JoinColumn(name = "organizationId")
+    private Set<DiscountObject> discounts;
 
     //contactor
     public OrganizationObject (OrganizationObject organizations){
@@ -90,8 +79,6 @@ public class OrganizationObject extends DiscountObject {
         this.users = users;
     }
 
-
-    @Override
     public Set<DiscountObject> getDiscounts() {
         return discounts;
     }
@@ -99,4 +86,5 @@ public class OrganizationObject extends DiscountObject {
     public void setDiscounts(Set<DiscountObject> discounts) {
         this.discounts = discounts;
     }
+
 }

@@ -5,17 +5,18 @@ import com.dev.objects.OrganizationObject;
 import com.dev.objects.ShopObject;
 import com.dev.objects.UserObject;
 import com.dev.utils.Utils;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 
 
 @Component
@@ -155,27 +156,43 @@ public class Persist {
         return shop;
     }
 
-    // get all organizations
-    public JSONArray gatAllOrganizations() {
-        JSONArray organization ;
-       organization= (JSONArray) sessionFactory.openSession().createQuery("FROM OrganizationObject ").list();
-
+    public List<OrganizationObject> gatAllOrganizations() {
+        List<OrganizationObject> organization=  sessionFactory.openSession().createQuery("FROM OrganizationObject ").list();
         return organization;
     }
 
 
-    public JSONArray getAllShops (){
-        JSONArray shops ;
-        shops = (JSONArray) sessionFactory.openSession().createQuery("FROM ShopObject ").list();
+    public List<ShopObject> getAllShops (){
+        List<ShopObject> shops =  sessionFactory.openSession().createQuery("FROM ShopObject ").list();
         return shops;
 
     }
 
-    public JSONArray getAllDiscounts (){
-        JSONArray discounts ;
-        discounts = (JSONArray)sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
+    public List<DiscountObject> getAllDiscounts (){
+        List<DiscountObject> discounts = sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
         return discounts;
+    }
 
+    public List<UserObject> getAllUsers() {
+       List<UserObject> users = sessionFactory.openSession().createQuery("FROM UserObject ").list();
+        return users;
+    }
+
+    public List<ArrayList<String>> getAllDOS(){
+        List<ArrayList<String>> dos = new ArrayList<>();
+        List<DiscountObject> discounts = getAllDiscounts();
+        for(DiscountObject discount : discounts){
+            ArrayList<String> list = new ArrayList<>();
+           String discountText= discount.getDiscount();
+           String discountOrganization= discount.getOrganization().getOrganizationName();
+           String discountShop= discount.getDiscountShop();
+
+            list.add(discountText);
+            list.add(discountOrganization);
+            list.add(discountShop);
+            dos.add(list);
+        }
+        return dos;
     }
 
     public void addUserToOrganization(String token, int organizationId){
@@ -209,13 +226,13 @@ public class Persist {
     }
 
 
-    public List<OrganizationObject> gatAllOrganizationsForUser(String token) {
+
+    public List<OrganizationObject> gatAllOrganizationsForUser(String token)  {
         UserObject user = getUserByToken(token);
         List<OrganizationObject> organizations = (List<OrganizationObject>) user.getOrganizations();
         return organizations;
-
     }
-    public List<DiscountObject> gatAllDiscountsForUser(String token) {
+    public List<DiscountObject> gatAllDiscountsForUser(String token)  {
         UserObject user = getUserByToken(token);
         List<DiscountObject> discounts = null;
         List<OrganizationObject> organizations = (List<OrganizationObject>) user.getOrganizations();
@@ -242,7 +259,6 @@ public class Persist {
                 .setParameter("organizationId", organizationId).getSingleResult();
 
         if(discount != null && organization != null){
-            discount.getOrganizations().add(organization);
             organization.getDiscounts().add(discount);
         }
         transaction.commit();
@@ -252,11 +268,52 @@ public class Persist {
 
     public List<UserObject> getUsersToSendDiscountNotification (DiscountObject discount) {
         List<UserObject> userObjectList = null;
-        Set<OrganizationObject> organizations = discount.getOrganizations();
-        for (OrganizationObject organization : organizations ){
+        List<UserObject> userObjects;
+        OrganizationObject organization = discount.getOrganization();
          userObjectList.addAll(organization.getUsers());
-        }
-        userObjectList.clear();
-     return userObjectList;
+        userObjects =  removeDuplicates(userObjectList);;
+     return userObjects;
     }
+
+    public static <T> ArrayList<T> removeDuplicates(List<UserObject> list) {
+
+        ArrayList<T> newList = new ArrayList<T>();
+
+        // Traverse through the first list
+        for (UserObject element : list) {
+            // If this element is not present in newList
+            // then add it
+            if (!newList.contains(element)) {
+                newList.add((T) element);
+            }
+        }
+        // return the new list
+        return newList;
+
+    }
+
+    public List<DiscountObject> getStartDiscount(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH");
+        java.util.Date date = new java.util.Date();
+        String currentDate = formatter.format(date);
+        Session session = sessionFactory.openSession();
+        List<DiscountObject> discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
+                .setParameter("currentDate",currentDate).list();
+        session.close();
+        return discounts;
+    }
+    public List<DiscountObject> getEndSDiscount(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH");
+        java.util.Date date = new Date();
+        String currentDate = formatter.format(date);
+        Session session = sessionFactory.openSession();
+        List<DiscountObject> discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
+                .setParameter("currentDate",currentDate)
+                .list();
+        session.close();
+        return discounts;
+    }
+
+
+
 }

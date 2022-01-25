@@ -1,6 +1,7 @@
 package com.dev.utils;
 
 import com.dev.Persist;
+
 import com.dev.objects.DiscountObject;
 import com.dev.objects.UserObject;
 import org.json.JSONObject;
@@ -13,10 +14,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
@@ -27,9 +25,7 @@ public class MessagesHandler extends TextWebSocketHandler {
 
     @Autowired
     private Persist persist;
-    private List<UserObject> userObjectList;
-    private List<DiscountObject> discountStart;
-    private List<DiscountObject> discountEnd;
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -55,4 +51,79 @@ public class MessagesHandler extends TextWebSocketHandler {
 
     }
 
+
+    public void sendStartDiscount() {
+        List<DiscountObject> startDiscount = persist.getStartDiscount();
+
+        String sOe="Starting";
+        if (startDiscount != null) {
+            for (DiscountObject start : startDiscount) {
+                if (start.getValidForEveryone() != 1) {
+                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(start);
+                            sender(userObjects,start,sOe);
+                }else {
+                    List<UserObject> userObjects = persist.getAllUsers();
+                    sender(userObjects,start,sOe);}
+            }
+        } else {
+            System.out.println("There Is No Discount That Starting Now");
+        }
+    }
+
+
+    public void sendEndDiscount() {
+        List<DiscountObject> endDiscount = persist.getEndSDiscount();
+
+        String sOe="Starting";
+        if (endDiscount != null) {
+            for (DiscountObject end : endDiscount) {
+                if (end.getValidForEveryone() != 1) {
+                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(end);
+                    sender(userObjects,end,sOe);
+                }else {
+                    List<UserObject> userObjects = persist.getAllUsers();
+                    sender(userObjects,end,sOe);}
+            }
+        } else {
+            System.out.println("There Is No Discount That Ending Now");
+        }
+    }
+
+    public void sender(List<UserObject> userObjects, DiscountObject discount, String sOe){
+        try {
+            if (userObjects != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("discountText", discount.getDiscount());
+                jsonObject.put("sOe", sOe);
+                for (UserObject userObject : userObjects) {
+                    sessionList.add(sessionMap.get(userObject.getToken()));
+                    if (sessionMap.get(userObject.getToken()) != null)
+                        sessionMap.get(userObject.getToken()).sendMessage(new TextMessage(jsonObject.toString()));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(10000);
+                    sendStartDiscount();
+                    sendEndDiscount();
+                    Thread.sleep(50000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        }).start();
+    }
 }
+
+
+
+
