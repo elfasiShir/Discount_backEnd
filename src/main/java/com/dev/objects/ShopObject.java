@@ -22,13 +22,10 @@ public class ShopObject {
     @Column
     private String type;
 
+
     @OneToMany
     private Set<DiscountObject> discount = new HashSet<DiscountObject>();
 
-
-    public int getId() {return shopId;}
-
-    public void setId(int id) {this.shopId = id;}
 
     public String getShopName() {return shopName;}
 
@@ -37,4 +34,20 @@ public class ShopObject {
     public String getType() {return type;}
 
     public void setType(String type) {this.type = type;}
+
+    public int getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(int shopId) {
+        this.shopId = shopId;
+    }
+
+    public Set<DiscountObject> getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Set<DiscountObject> discount) {
+        this.discount = discount;
+    }
 }

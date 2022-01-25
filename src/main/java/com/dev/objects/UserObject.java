@@ -1,7 +1,6 @@
 package com.dev.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,6 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class UserObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -81,10 +81,6 @@ public class UserObject {
     public void setToken(String token) {
         this.token = token;
     }
-
-    public void addPost (String post) {
-    }
-
 
 
     public int getUserId() {

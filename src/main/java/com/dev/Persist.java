@@ -156,26 +156,41 @@ public class Persist {
         return shop;
     }
 
+
     public List<OrganizationObject> gatAllOrganizations() {
-        List<OrganizationObject> organization=  sessionFactory.openSession().createQuery("FROM OrganizationObject ").list();
-        return organization;
+        Session session = sessionFactory.openSession();
+        List<OrganizationObject> allOrganizations = (List<OrganizationObject>) session.createQuery(
+                        " FROM OrganizationObject ")
+                .list();
+        session.close();
+        return allOrganizations;
     }
 
-
     public List<ShopObject> getAllShops (){
-        List<ShopObject> shops =  sessionFactory.openSession().createQuery("FROM ShopObject ").list();
-        return shops;
-
+        Session session = sessionFactory.openSession();
+        List<ShopObject> allShops = (List<ShopObject>) session.createQuery(
+                        " FROM ShopObject ")
+                .list();
+        session.close();
+        return allShops;
     }
 
     public List<DiscountObject> getAllDiscounts (){
-        List<DiscountObject> discounts = sessionFactory.openSession().createQuery("FROM DiscountObject ").list();
-        return discounts;
+        Session session = sessionFactory.openSession();
+        List<DiscountObject> allDiscounts = (List<DiscountObject>) session.createQuery(
+                        " FROM DiscountObject ")
+                .list();
+        session.close();
+        return allDiscounts;
     }
 
     public List<UserObject> getAllUsers() {
-       List<UserObject> users = sessionFactory.openSession().createQuery("FROM UserObject ").list();
-        return users;
+        Session session = sessionFactory.openSession();
+        List<UserObject> allUsers = (List<UserObject>) session.createQuery(
+                        " FROM UserObject ")
+                .list();
+        session.close();
+        return allUsers;
     }
 
     public List<ArrayList<String>> getAllDOS(){
@@ -297,7 +312,7 @@ public class Persist {
         java.util.Date date = new java.util.Date();
         String currentDate = formatter.format(date);
         Session session = sessionFactory.openSession();
-        List<DiscountObject> discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
+        List discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
                 .setParameter("currentDate",currentDate).list();
         session.close();
         return discounts;
