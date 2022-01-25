@@ -54,7 +54,6 @@ public class MessagesHandler extends TextWebSocketHandler {
 
     public void sendStartDiscount() {
         List<DiscountObject> startDiscount = persist.getStartDiscount();
-
         String sOe="Starting";
         if (startDiscount != null) {
             for (DiscountObject start : startDiscount) {
@@ -104,23 +103,6 @@ public class MessagesHandler extends TextWebSocketHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @PostConstruct
-    public void init() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(10000);
-                    sendStartDiscount();
-                    sendEndDiscount();
-                    Thread.sleep(50000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-
-                }
-            }
-        }).start();
     }
 }
 

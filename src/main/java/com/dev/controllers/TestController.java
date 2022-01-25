@@ -6,7 +6,6 @@ import com.dev.objects.OrganizationObject;
 import com.dev.objects.ShopObject;
 import com.dev.objects.UserObject;
 import com.dev.utils.MessagesHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,23 +13,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.*;
 
 @RestController
 public class TestController {
-    private final MessagesHandler messagesHandler;
+    List<Timer> timers = new ArrayList<>();
+
+
     @Autowired
     private Persist persist;
+    @Autowired
+    private final MessagesHandler messagesHandler = new MessagesHandler();
 
-
-    public TestController(MessagesHandler messagesHandler) {
-        this.messagesHandler = messagesHandler;
-    }
 
     @PostConstruct
-    private void init () {
+    private void init() {
+        List<DiscountObject> discounts = persist.getAllDiscounts();
+        for (DiscountObject discount : discounts) {
+            initializeTimersForDiscount(discount);
+        }
     }
 
     //הרשמה
@@ -84,6 +86,7 @@ public class TestController {
     public List<DiscountObject> getAllDiscounts (){
         return persist.getAllDiscounts ();
     }
+
     @RequestMapping(value ="get_all_discounts_to_table" , method = RequestMethod.GET)
     public List<ArrayList<String>> getAllDOS (){
         return persist.getAllDOS ();
@@ -102,15 +105,14 @@ public class TestController {
         persist.addDiscountToOrganization(discountId, organizationId);
     }
     @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizationsForUser(String token) throws JsonProcessingException {
+    public List<OrganizationObject> gatAllOrganizationsForUser(String token) {
         return persist.gatAllOrganizationsForUser(token);
     }
     @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
-    public List<DiscountObject> gatAllDiscountsForUser(String token) throws JsonProcessingException {
+    public List<DiscountObject> gatAllDiscountsForUser(String token)  {
 
         return persist.gatAllDiscountsForUser(token);
     }
-
 
     @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
     public boolean doseUserBelongToOrganization (String token , int organizationId){
@@ -121,5 +123,30 @@ public class TestController {
         return persist.getUsersToSendDiscountNotification(discount);
     }
 
+    private void initializeTimersForDiscount(DiscountObject discount){
+        long discountStartMilli = discount.getDiscountStart().toInstant().toEpochMilli();
+        long discountEndMilli = discount.getDiscountEnd().toInstant().toEpochMilli();
 
+        Timer startTimer = new Timer();
+        Timer endTimer = new Timer();
+
+        TimerTask startTask = new TimerTask() {
+            @Override
+            public void run() {
+                messagesHandler.sendStartDiscount();
+            }
+        };
+        TimerTask endTask = new TimerTask() {
+            @Override
+            public void run() {
+                messagesHandler.sendEndDiscount();
+            }
+        };
+
+        startTimer.schedule(startTask, new Date(discountStartMilli));
+        endTimer.schedule(endTask, new Date(discountEndMilli));
+
+        timers.add(startTimer);
+        timers.add(endTimer);
+    }
 }
