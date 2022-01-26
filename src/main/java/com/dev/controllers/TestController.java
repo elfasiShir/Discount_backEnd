@@ -54,6 +54,10 @@ public class TestController {
         return persist.doesUsernameTaken(username);
     }
 
+    @RequestMapping(value ="getAllDiscountsForTable",  method = RequestMethod.GET)
+    public List<HashMap> getAllDiscountsForTable(){
+        return persist.getAllDiscountsForTable();
+    }
 
     @RequestMapping(value ="get_organization_by_id" , method = RequestMethod.GET)
     public OrganizationObject getOrganizationById (int id){
