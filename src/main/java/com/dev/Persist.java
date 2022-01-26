@@ -195,17 +195,25 @@ public class Persist {
 
     public List<ArrayList<String>> getAllDOS(){
         List<ArrayList<String>> dos = new ArrayList<>();
-        List<DiscountObject> discounts = getAllDiscounts();
-        for(DiscountObject discount : discounts){
-            ArrayList<String> list = new ArrayList<>();
-           String discountText= discount.getDiscount();
-           String discountOrganization= discount.getOrganization().getOrganizationName();
-           String discountShop= discount.getDiscountShop();
+        List<OrganizationObject> organizations = gatAllOrganizations();
 
-            list.add(discountText);
-            list.add(discountOrganization);
-            list.add(discountShop);
-            dos.add(list);
+        for(OrganizationObject organization : organizations){
+            ArrayList<String> list = new ArrayList<>();
+
+            List<DiscountObject> discountList= (List<DiscountObject>) organization.getDiscounts();
+            for(DiscountObject discount : discountList){
+                String discountShop= discount.getDiscountShop();
+                String discountText= discount.getDiscount();
+                String discountOrganization= organization.getOrganizationName();
+
+
+                list.add(discountText);
+                list.add(discountOrganization);
+                list.add(discountShop);
+
+                dos.add(list);
+            }
+
         }
         return dos;
     }
@@ -284,7 +292,7 @@ public class Persist {
     public List<UserObject> getUsersToSendDiscountNotification (DiscountObject discount) {
         List<UserObject> userObjectList = null;
         List<UserObject> userObjects;
-        OrganizationObject organization = discount.getOrganization();
+        OrganizationObject organization = (OrganizationObject) discount.getOrganizations();
          userObjectList.addAll(organization.getUsers());
         userObjects =  removeDuplicates(userObjectList);;
      return userObjects;

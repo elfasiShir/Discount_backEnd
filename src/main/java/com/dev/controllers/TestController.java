@@ -37,7 +37,7 @@ public class TestController {
 
     //הרשמה
     @RequestMapping(value ="sign-up", method = RequestMethod.POST)
-    public boolean signUn (@RequestParam String username, String password) {
+    public boolean signUp (@RequestParam String username, String password) {
         return persist.signUp(username, password);
     }
     //להתחבר

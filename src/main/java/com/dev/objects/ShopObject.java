@@ -1,6 +1,8 @@
 package com.dev.objects;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +25,6 @@ public class ShopObject {
     private String type;
 
 
-    @OneToMany
-    private Set<DiscountObject> discount = new HashSet<DiscountObject>();
 
 
     public String getShopName() {return shopName;}
@@ -43,11 +43,5 @@ public class ShopObject {
         this.shopId = shopId;
     }
 
-    public Set<DiscountObject> getDiscount() {
-        return discount;
-    }
 
-    public void setDiscount(Set<DiscountObject> discount) {
-        this.discount = discount;
-    }
 }

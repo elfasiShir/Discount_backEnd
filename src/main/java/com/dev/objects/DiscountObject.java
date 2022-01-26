@@ -38,9 +38,21 @@ public abstract class DiscountObject {
 
 
 
-    @ManyToOne
-    @JoinColumn(name="organizationId")
-    private OrganizationObject organization;
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.PERSIST
+            },
+            targetEntity = OrganizationObject.class)
+    @JoinTable(name = "discounts_Organizations",
+            joinColumns = @JoinColumn(name = "discountId"),
+            inverseJoinColumns = @JoinColumn(name = "organizationId"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"discountId", "organizationId"}))
+    @JsonIgnoreProperties("discounts")
+    private Set<OrganizationObject> organizations = new HashSet<>();
 
 
     public int getDiscountId() {
@@ -66,6 +78,7 @@ public abstract class DiscountObject {
     public void setDiscountShop(String discountShop) {
         this.discountShop = discountShop;
     }
+
     public Date getDiscountStart() {
         return discountStart;
     }
@@ -89,15 +102,14 @@ public abstract class DiscountObject {
     public void setValidForEveryone(int validForEveryone) {
         this.validForEveryone = validForEveryone;
     }
-    public OrganizationObject getOrganization() {
-        return organization;
+
+
+    public Set<OrganizationObject> getOrganizations() {
+        return organizations;
     }
 
-    public void setOrganization(OrganizationObject organization) {
-        this.organization = organization;
+    public void setOrganizations(Set<OrganizationObject> organizations) {
+        this.organizations = organizations;
     }
-
-
-    public abstract Set<DiscountObject> getDiscounts();
 }
 
