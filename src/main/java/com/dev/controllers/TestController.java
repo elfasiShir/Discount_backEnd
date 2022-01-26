@@ -58,6 +58,10 @@ public class TestController {
     public List<HashMap> getAllDiscountsForTable(){
         return persist.getAllDiscountsForTable();
     }
+    @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
+    public List<DiscountObject> getAllDiscountsForUser(String token)  {
+        return (List<DiscountObject>) persist.getAllDiscountsForUser(token);
+    }
 
     @RequestMapping(value ="get_organization_by_id" , method = RequestMethod.GET)
     public OrganizationObject getOrganizationById (int id){
@@ -95,10 +99,7 @@ public class TestController {
     public List<OrganizationObject> getAllOrganizationsForUser(String token) {
         return persist.getAllOrganizationsForUser(token);
     }
-    @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
-    public List<DiscountObject> getAllDiscountsForUser(String token)  {
-        return (List<DiscountObject>) persist.getAllDiscountsForUser(token);
-    }
+
 
 //    @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
 //    public boolean doseUserBelongToOrganization (String token , int organizationId){

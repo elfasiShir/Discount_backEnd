@@ -52,8 +52,8 @@ public class TestConfig {
             configuration.addAnnotatedClass(clazz);
         }
 
-
         configuration.addAnnotatedClass(DiscountObject.class);
+        configuration.addAnnotatedClass(DiscountOrganization.class);
         configuration.addAnnotatedClass(OrganizationObject.class);
         configuration.addAnnotatedClass(ShopObject.class);
         configuration.addAnnotatedClass(UserObject.class);
