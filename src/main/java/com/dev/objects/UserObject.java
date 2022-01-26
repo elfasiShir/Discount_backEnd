@@ -24,8 +24,6 @@ public class UserObject {
     @Column
     private String token;
 
-    @Column
-    private int login_tries ;
 
 
     @ManyToMany(
@@ -44,19 +42,16 @@ public class UserObject {
     @JsonIgnoreProperties("users")
     private Set<OrganizationObject> organizations = new HashSet<>();
 
+
     public UserObject(String username, String password, String token) {
         this.username= username;
         this.password= password;
         this.token = token;
-        this.login_tries = 5;
     }
-
-
 
     public UserObject() {
 
     }
-
 
     public String getUsername() {
         return username;
@@ -90,16 +85,6 @@ public class UserObject {
     public void setUserId(int UserId) {
         this.userId = UserId;
     }
-
-
-    public int getLogin_tries() {
-        return login_tries;
-    }
-
-    public void setLogin_tries(int login_tries) {
-        this.login_tries = login_tries;
-    }
-
 
     public Set<OrganizationObject> getOrganizations() {
         return organizations;

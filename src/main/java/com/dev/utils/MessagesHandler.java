@@ -52,42 +52,6 @@ public class MessagesHandler extends TextWebSocketHandler {
     }
 
 
-    public void sendStartDiscount() {
-        List<DiscountObject> startDiscount = persist.getStartDiscount();
-        String sOe="Starting";
-        if (startDiscount != null) {
-            for (DiscountObject start : startDiscount) {
-                if (start.getValidForEveryone() != 1) {
-                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(start);
-                            sender(userObjects,start,sOe);
-                }else {
-                    List<UserObject> userObjects = persist.getAllUsers();
-                    sender(userObjects,start,sOe);}
-            }
-        } else {
-            System.out.println("There Is No Discount That Starting Now");
-        }
-    }
-
-
-    public void sendEndDiscount() {
-        List<DiscountObject> endDiscount = persist.getEndSDiscount();
-
-        String sOe="Starting";
-        if (endDiscount != null) {
-            for (DiscountObject end : endDiscount) {
-                if (end.getValidForEveryone() != 1) {
-                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(end);
-                    sender(userObjects,end,sOe);
-                }else {
-                    List<UserObject> userObjects = persist.getAllUsers();
-                    sender(userObjects,end,sOe);}
-            }
-        } else {
-            System.out.println("There Is No Discount That Ending Now");
-        }
-    }
-
     public void sender(List<UserObject> userObjects, DiscountObject discount, String sOe){
         try {
             if (userObjects != null) {

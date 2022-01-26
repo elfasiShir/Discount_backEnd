@@ -4,6 +4,7 @@ package com.dev.objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,34 +26,36 @@ public abstract class DiscountObject {
     @Column
     private String discountShop;
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date discountStart;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date discountEnd;
+    private LocalDateTime discountStart;
 
     @Column
-    private int validForEveryone = 0;
+
+    private LocalDateTime discountEnd;
 
 
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.DETACH,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.PERSIST
-            },
-            targetEntity = OrganizationObject.class)
-    @JoinTable(name = "discounts_Organizations",
-            joinColumns = @JoinColumn(name = "discountId"),
-            inverseJoinColumns = @JoinColumn(name = "organizationId"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"discountId", "organizationId"}))
-    @JsonIgnoreProperties("discounts")
-    private Set<OrganizationObject> organizations = new HashSet<>();
+    @Column
+    private boolean validForEveryone = true;
+
+
+//
+//    @ManyToMany(
+//            fetch = FetchType.LAZY,
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.REFRESH,
+//                    CascadeType.PERSIST
+//            },
+//            targetEntity = OrganizationObject.class)
+//    @JoinTable(name = "discounts_Organizations",
+//            joinColumns = @JoinColumn(name = "discountId"),
+//            inverseJoinColumns = @JoinColumn(name = "organizationId"),
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"discountId", "organizationId"}))
+//    @JsonIgnoreProperties("discounts")
+//    private Set<OrganizationObject> organizations = new HashSet<>();
 
 
     public int getDiscountId() {
@@ -79,37 +82,37 @@ public abstract class DiscountObject {
         this.discountShop = discountShop;
     }
 
-    public Date getDiscountStart() {
+    public LocalDateTime getDiscountStart() {
         return discountStart;
     }
 
-    public void setDiscountStart(Date discountStart) {
+    public void setDiscountStart(LocalDateTime discountStart) {
         this.discountStart = discountStart;
     }
 
-    public Date getDiscountEnd() {
+    public LocalDateTime getDiscountEnd() {
         return discountEnd;
     }
 
-    public void setDiscountEnd(Date discountEnd) {
-        this.discountEnd = this.discountEnd;
+    public void setDiscountEnd(LocalDateTime discountEnd) {
+        this.discountEnd = discountEnd;
     }
 
-    public int getValidForEveryone() {
+
+    public boolean isValidForEveryone() {
         return validForEveryone;
     }
 
-    public void setValidForEveryone(int validForEveryone) {
+    public void setValidForEveryone(boolean validForEveryone) {
         this.validForEveryone = validForEveryone;
     }
-
-
-    public Set<OrganizationObject> getOrganizations() {
-        return organizations;
-    }
-
-    public void setOrganizations(Set<OrganizationObject> organizations) {
-        this.organizations = organizations;
-    }
+//
+//    public Set<OrganizationObject> getOrganizations() {
+//        return organizations;
+//    }
+//
+//    public void setOrganizations(Set<OrganizationObject> organizations) {
+//        this.organizations = organizations;
+//    }
 }
 
