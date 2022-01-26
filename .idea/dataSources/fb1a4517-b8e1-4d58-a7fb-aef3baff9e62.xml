@@ -974,159 +974,241 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <user id="282" parent="1" name="root">
       <Host>localhost</Host>
     </user>
-    <table id="283" parent="2" name="discounts"/>
-    <table id="284" parent="2" name="discounts_organizations"/>
-    <table id="285" parent="2" name="organizations"/>
-    <table id="286" parent="2" name="shops"/>
-    <table id="287" parent="2" name="users"/>
-    <table id="288" parent="2" name="users_organizations"/>
-    <column id="289" parent="283" name="discountId">
+    <table id="283" parent="2" name="discount">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="284" parent="2" name="discounts"/>
+    <table id="285" parent="2" name="organization_discount">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="286" parent="2" name="organizations">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="287" parent="2" name="shops">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="288" parent="2" name="shops_discounts"/>
+    <table id="289" parent="2" name="user_organization">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="290" parent="2" name="users">
+      <Engine>MyISAM</Engine>
+    </table>
+    <table id="291" parent="2" name="users_organizations"/>
+    <column id="292" parent="283" name="discountId">
       <Position>1</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="290" parent="283" name="discount">
+    <column id="293" parent="283" name="discount">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <column id="291" parent="283" name="discountEnd">
+    <column id="294" parent="283" name="discountEnd">
       <Position>3</Position>
       <DataType>datetime|0s</DataType>
     </column>
-    <column id="292" parent="283" name="discountShop">
+    <column id="295" parent="283" name="discountStart">
       <Position>4</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <column id="293" parent="283" name="discountStart">
-      <Position>5</Position>
       <DataType>datetime|0s</DataType>
     </column>
-    <column id="294" parent="283" name="validForEveryone">
-      <Position>6</Position>
-      <DataType>int|0s</DataType>
+    <column id="296" parent="283" name="validForEveryone">
+      <Position>5</Position>
+      <DataType>bit(1)|0s</DataType>
     </column>
-    <key id="295" parent="283" name="PRIMARY">
+    <key id="297" parent="283" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>discountId</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="296" parent="284" name="discountId">
+    <column id="298" parent="284" name="discountId">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="299" parent="284" name="discount">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="300" parent="284" name="discountEnd">
+      <Position>3</Position>
+      <DataType>datetime|0s</DataType>
+    </column>
+    <column id="301" parent="284" name="discountShop">
+      <Position>4</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="302" parent="284" name="discountStart">
+      <Position>5</Position>
+      <DataType>datetime|0s</DataType>
+    </column>
+    <column id="303" parent="284" name="validForEveryone">
+      <Position>6</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="304" parent="284" name="organizationId">
+      <Position>7</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <key id="305" parent="284" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>discountId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="306" parent="285" name="organizationId">
       <Position>1</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="297" parent="284" name="organizationId">
+    <column id="307" parent="285" name="discountId">
       <Position>2</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="298" parent="284" name="FKm2t8eetjy33h6ie3ree87onu9">
+    <index id="308" parent="285" name="FKp4qhnuxcbs2gjo41ac7qby3jt">
       <ColNames>organizationId</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="299" parent="284" name="PRIMARY">
+    <key id="309" parent="285" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>discountId
 organizationId</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="300" parent="284" name="FKn8q2f146becthywv1ufx284oi">
-      <ColNames>discountId</ColNames>
+    <column id="310" parent="286" name="organizationId">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="311" parent="286" name="organizationName">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <key id="312" parent="286" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>organizationId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="313" parent="287" name="id">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="314" parent="287" name="shopName">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="315" parent="287" name="type">
+      <Position>3</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="316" parent="287" name="shopId">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="317" parent="287" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="318" parent="288" name="ShopObject_shopId">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="319" parent="288" name="discount_discountId">
+      <Position>2</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="320" parent="288" name="UK_h1gxoujfipuggdwl01dymh9ml">
+      <ColNames>discount_discountId</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <key id="321" parent="288" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>ShopObject_shopId
+discount_discountId</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="322" parent="288" name="UK_h1gxoujfipuggdwl01dymh9ml">
+      <ColNames>discount_discountId</ColNames>
+      <UnderlyingIndexName>UK_h1gxoujfipuggdwl01dymh9ml</UnderlyingIndexName>
+    </key>
+    <foreign-key id="323" parent="288" name="FKkn3sqflm2gy310rs6vg6rkxus">
+      <ColNames>discount_discountId</ColNames>
       <RefTableName>discounts</RefTableName>
       <RefColNames>discountId</RefColNames>
     </foreign-key>
-    <foreign-key id="301" parent="284" name="FKm2t8eetjy33h6ie3ree87onu9">
-      <ColNames>organizationId</ColNames>
-      <RefTableName>organizations</RefTableName>
-      <RefColNames>organizationId</RefColNames>
-    </foreign-key>
-    <column id="302" parent="285" name="organizationId">
-      <Position>1</Position>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>null</SequenceIdentity>
-    </column>
-    <column id="303" parent="285" name="organizationName">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <key id="304" parent="285" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <ColNames>organizationId</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <column id="305" parent="286" name="shopId">
-      <Position>1</Position>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>null</SequenceIdentity>
-    </column>
-    <column id="306" parent="286" name="shopName">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <column id="307" parent="286" name="type">
-      <Position>3</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <key id="308" parent="286" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <ColNames>shopId</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <column id="309" parent="287" name="userId">
-      <Position>1</Position>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>null</SequenceIdentity>
-    </column>
-    <column id="310" parent="287" name="password">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <column id="311" parent="287" name="token">
-      <Position>3</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <column id="312" parent="287" name="username">
-      <Position>4</Position>
-      <DataType>varchar(255)|0s</DataType>
-    </column>
-    <key id="313" parent="287" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <ColNames>userId</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <column id="314" parent="288" name="userId">
+    <column id="324" parent="289" name="organizationId">
       <Position>1</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="315" parent="288" name="organizationId">
+    <column id="325" parent="289" name="userId">
       <Position>2</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="316" parent="288" name="FKiyrpkom11v95v411jqp1ko2ke">
+    <index id="326" parent="289" name="FK3n98sb8eiwxx9odiec3frmfed">
       <ColNames>organizationId</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="317" parent="288" name="PRIMARY">
+    <key id="327" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>userId
 organizationId</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="318" parent="288" name="FKl6fmje7ixv4lfacavolhlv6i6">
+    <column id="328" parent="290" name="userId">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="329" parent="290" name="login_tries">
+      <Position>2</Position>
+      <DataType>int|0s</DataType>
+      <DefaultExpression>5</DefaultExpression>
+    </column>
+    <column id="330" parent="290" name="password">
+      <Position>3</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="331" parent="290" name="token">
+      <Position>4</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <column id="332" parent="290" name="username">
+      <Position>5</Position>
+      <DataType>varchar(255)|0s</DataType>
+    </column>
+    <key id="333" parent="290" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
       <ColNames>userId</ColNames>
-      <RefTableName>users</RefTableName>
-      <RefColNames>userId</RefColNames>
-    </foreign-key>
-    <foreign-key id="319" parent="288" name="FKiyrpkom11v95v411jqp1ko2ke">
-      <ColNames>organizationId</ColNames>
-      <RefTableName>organizations</RefTableName>
-      <RefColNames>organizationId</RefColNames>
-    </foreign-key>
+      <Primary>1</Primary>
+    </key>
+    <column id="334" parent="291" name="userId">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="335" parent="291" name="organizationId">
+      <Position>2</Position>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="336" parent="291" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>userId
+organizationId</ColNames>
+      <Primary>1</Primary>
+    </key>
   </database-model>
 </dataSource>

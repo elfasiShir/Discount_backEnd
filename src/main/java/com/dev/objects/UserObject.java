@@ -1,5 +1,6 @@
 package com.dev.objects;
 
+import com.dev.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -43,10 +44,10 @@ public class UserObject {
     private Set<OrganizationObject> organizations = new HashSet<>();
 
 
-    public UserObject(String username, String password, String token) {
+    public UserObject(String username, String password) {
         this.username= username;
         this.password= password;
-        this.token = token;
+        this.token = Utils.createHash(username, password);
     }
 
     public UserObject() {

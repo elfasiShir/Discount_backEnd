@@ -51,6 +51,44 @@ public class MessagesHandler extends TextWebSocketHandler {
 
     }
 
+/*
+
+    public void sendStartDiscount() {
+        List<DiscountObject> startDiscount = persist.getStartDiscount();
+        String sOe="Starting";
+        if (startDiscount != null) {
+            for (DiscountObject start : startDiscount) {
+                if (start.getValidForEveryone() != 1) {
+                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(start);
+                            sender(userObjects,start,sOe);
+                }else {
+                    List<UserObject> userObjects = persist.getAllUsers();
+                    sender(userObjects,start,sOe);}
+            }
+        } else {
+            System.out.println("There Is No Discount That Starting Now");
+        }
+    }
+
+
+    public void sendEndDiscount() {
+        List<DiscountObject> endDiscount = persist.getEndSDiscount();
+
+        String sOe="Starting";
+        if (endDiscount != null) {
+            for (DiscountObject end : endDiscount) {
+                if (end.getValidForEveryone() != 1) {
+                    List<UserObject> userObjects = persist.getUsersToSendDiscountNotification(end);
+                    sender(userObjects,end,sOe);
+                }else {
+                    List<UserObject> userObjects = persist.getAllUsers();
+                    sender(userObjects,end,sOe);}
+            }
+        } else {
+            System.out.println("There Is No Discount That Ending Now");
+        }
+    }
+*/
 
     public void sender(List<UserObject> userObjects, DiscountObject discount, String sOe){
         try {
@@ -66,6 +104,33 @@ public class MessagesHandler extends TextWebSocketHandler {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public void sendStartDiscountNotifications(Set<UserObject> users, DiscountObject discount) throws IOException {
+        for (UserObject user : users) {
+            WebSocketSession session = sessionMap.get(user.getToken());
+            if (session != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("notification",
+                        "There is a new sale at " + discount.getDiscountShop() + "! \n " +
+                                discount.getDiscount());
+                session.sendMessage(new TextMessage(jsonObject.toString()));
+
+            }
+        }
+    }
+
+    public void sendEndDiscountNotifications(Set<UserObject> users, DiscountObject sale) throws IOException {
+        for (UserObject user : users) {
+            WebSocketSession session = sessionMap.get(user.getToken());
+            if (session != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("notification",
+                        " Sale at :" + sale.getDiscountShop() + " is ending soon,   \n " +
+                                sale.getDiscount());
+                session.sendMessage(new TextMessage(jsonObject.toString()));
+
+            }
         }
     }
 }

@@ -9,10 +9,14 @@ import com.dev.utils.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -57,7 +61,7 @@ public class TestController {
     }
 
     @RequestMapping(value ="get_all_organizations" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizations(){
+    public List<OrganizationObject> getAllOrganizations(){
             return persist.getAllOrganizations();
     }
 
@@ -66,6 +70,10 @@ public class TestController {
             return persist.getAllShops ();
     }
 
+    @RequestMapping(value ="get_all_discounts" , method = RequestMethod.GET)
+    public List<DiscountObject> getAllDiscounts (){
+        return persist.getAllDiscounts ();
+    }
 
     @RequestMapping(value ="add_user_to_organization", method = RequestMethod.POST)
     public void addUseToOrganization(String token, int organizationId){
@@ -80,12 +88,12 @@ public class TestController {
 //        persist.addDiscountToOrganization(discountId, organizationId);
 //    }
     @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
-    public List<OrganizationObject> gatAllOrganizationsForUser(String token) {
+    public List<OrganizationObject> getAllOrganizationsForUser(String token) {
         return persist.getAllOrganizationsForUser(token);
     }
     @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
-    public List<DiscountObject> gatAllDiscountsForUser(String token)  {
-        return (List<DiscountObject>) persist.gatAllDiscountsForUser(token);
+    public List<DiscountObject> getAllDiscountsForUser(String token)  {
+        return (List<DiscountObject>) persist.getAllDiscountsForUser(token);
     }
 
 //    @RequestMapping(value ="dose_user_belong_to_organization" , method = RequestMethod.GET)
@@ -95,8 +103,8 @@ public class TestController {
 
 
     private void initializeTimersForDiscount(DiscountObject discount){
-        long discountStartMilli = discount.getDiscountStart().toInstant().toEpochMilli();
-        long discountEndMilli = discount.getDiscountEnd().toInstant().toEpochMilli();
+        long saleStartMilli = discount.getDiscountStart().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long saleEndMilli = discount.getDiscountEnd().minus(10, ChronoUnit.MINUTES).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         Timer startTimer = new Timer();
         Timer endTimer = new Timer();
@@ -104,18 +112,26 @@ public class TestController {
         TimerTask startTask = new TimerTask() {
             @Override
             public void run() {
-                messagesHandler.sendStartDiscount();
+                try {
+                    messagesHandler.sendStartDiscountNotifications(persist.getUsersForOneSale(discount.getDiscountId()), discount);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
         TimerTask endTask = new TimerTask() {
             @Override
             public void run() {
-                messagesHandler.sendEndDiscount();
+                try {
+                    messagesHandler.sendEndDiscountNotifications(persist.getUsersForOneSale(discount.getDiscountId()), discount);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
-        startTimer.schedule(startTask, new Date(discountStartMilli));
-        endTimer.schedule(endTask, new Date(discountEndMilli));
+        startTimer.schedule(startTask, new Date(saleStartMilli));
+        endTimer.schedule(endTask, new Date(saleEndMilli));
 
         timers.add(startTimer);
         timers.add(endTimer);

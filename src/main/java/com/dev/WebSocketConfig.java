@@ -15,6 +15,4 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
         webSocketHandlerRegistry.addHandler(new MessagesHandler(), "/stream");
     }
-
-
 }

@@ -57,6 +57,11 @@ public abstract class DiscountObject {
 //    @JsonIgnoreProperties("discounts")
 //    private Set<OrganizationObject> organizations = new HashSet<>();
 
+    public DiscountObject(String discount, String discountShop){
+        this.discount = discount;
+        this.discountShop = discountShop;
+    }
+    public DiscountObject(){}
 
     public int getDiscountId() {
         return discountId;
