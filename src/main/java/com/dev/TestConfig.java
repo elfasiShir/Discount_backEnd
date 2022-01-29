@@ -6,11 +6,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -34,14 +29,13 @@ public class TestConfig {
         settings.put(Environment.URL, "jdbc:mysql://localhost:3306/ashcollege?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8");
         settings.put(Environment.USER, "root");
         settings.put(Environment.PASS, "1234");
-        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL55Dialect");
+        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
         settings.put(Environment.SHOW_SQL, "true");
         settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
         settings.put(Environment.HBM2DDL_AUTO, "update");
         settings.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, true);
         return settings;
     }
-
 
     @Bean
     public SessionFactory sessionFactory() throws Exception {
@@ -64,6 +58,7 @@ public class TestConfig {
         return configuration.buildSessionFactory(serviceRegistry);
     }
 
+
     @Bean
     public HibernateTransactionManager transactionManager() throws Exception{
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
@@ -72,6 +67,7 @@ public class TestConfig {
     }
 
 
-
-
 }
+
+
+

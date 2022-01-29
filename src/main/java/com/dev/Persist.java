@@ -2,7 +2,6 @@ package com.dev;
 
 import com.dev.objects.*;
 import com.dev.utils.Utils;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,44 +9,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
+    @Component
+    public class Persist {
+        private final SessionFactory sessionFactory;
 
-@Component
-public class Persist {
-    private final SessionFactory sessionFactory;
-    private Connection connection;
-
-    @Autowired
-    public Persist (SessionFactory sf) {
-        this.sessionFactory = sf;
-    }
-
-    @PostConstruct
-    public void createConnectionToDatabase () {
-        try {
-            this.connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/ashCollege", "root", "1234");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        @Autowired
+        public Persist (SessionFactory sf) {
+            this.sessionFactory = sf;
         }
-    }
 
 
-    public boolean signUp(String username, String password) {
+        public boolean signUp(String username, String password) {
         boolean success = false;
         if(username!=null && password!=null){
             if(!doesUsernameTaken(username)){
                 Session session = sessionFactory.openSession();
                 Transaction transaction = session.beginTransaction();
-                UserObject userObject = new UserObject(username, password);
+                UserObject userObject = new UserObject();
+                userObject.setUsername(username);
+                userObject.setPassword(password);
+                String token = Utils.createHash(username, password);
+                userObject.setToken(token);
                 session.save(userObject);
                 transaction.commit();
                 session.close();
-                if(userObject.getUserId() != 0)
+                if(userObject.getId() != 0)
                     success = true;
             }
         }
@@ -56,11 +44,14 @@ public class Persist {
 
     public String logIn(String username, String password) {
         Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
         UserObject userObject = (UserObject) session.createQuery(
-                "FROM UserObject u WHERE u.username =:username AND u.password =:password")
+                "FROM UserObject  WHERE username =:username AND password =:password")
                 .setParameter("username", username)
                 .setParameter("password", password)
-                .uniqueResult();
+                .list();
+        transaction.commit();
         session.close();
         if (userObject != null){
             return userObject.getToken();}
@@ -70,10 +61,14 @@ public class Persist {
 
     public UserObject getUserByToken (String token){
         Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
         UserObject userObject = (UserObject) session.createQuery(
-                "FROM UserObject u WHERE u.token = :token")
+                "FROM UserObject  WHERE token = :token")
                 .setParameter("token",token)
                 .uniqueResult();
+
+        transaction.commit();
         session.close();
         return userObject;
     }
@@ -82,13 +77,13 @@ public class Persist {
     public boolean doesUsernameTaken (String username) {
         boolean usernameExist = false;
         Session session = sessionFactory.openSession();
-        UserObject userObject = (UserObject) session.createQuery(
-                "FROM UserObject u WHERE u.username =:username")
+        List list =  session.createQuery(
+                "FROM UserObject  WHERE username =:username")
                 .setParameter("username", username)
-                .uniqueResult();
+                .list();
         session.close();
 
-        if (userObject != null) {
+        if (list.size() == 0) {
             usernameExist = true;
         }
         return usernameExist;
@@ -98,7 +93,7 @@ public class Persist {
     public OrganizationObject getOrganizationById (int id) {
         Session session = sessionFactory.openSession();
         OrganizationObject organization = (OrganizationObject)
-                session.createQuery("FROM OrganizationObject o WHERE o.organizationId =:id")
+                session.createQuery("FROM OrganizationObject o WHERE id =:id")
                         .setParameter("id", id)
                         .uniqueResult();
         session.close();
@@ -108,7 +103,7 @@ public class Persist {
     public ShopObject getShopById (int id){
         Session session = sessionFactory.openSession();
         ShopObject shop = (ShopObject)
-                session.createQuery("FROM ShopObject s WHERE s.shopId =:id")
+                session.createQuery("FROM ShopObject WHERE id =:id")
                 .setParameter("id",id)
                 .uniqueResult();
         session.close();
@@ -117,42 +112,48 @@ public class Persist {
 
     public List<OrganizationObject> getAllOrganizations() {
         Session session = sessionFactory.openSession();
-        List<OrganizationObject> allOrganizations = (List<OrganizationObject>) session.createQuery(
-                        " FROM OrganizationObject ")
-                .list();
-        session.close();
+        Transaction transaction = session.beginTransaction();
+
+        List<OrganizationObject> allOrganizations = new ArrayList<>();
+
+        for(Object organization : session.createQuery("FROM OrganizationObject ").list())
+            allOrganizations.add((OrganizationObject) organization);
+
+
+         transaction.commit();
+         session.close();
         return allOrganizations;
     }
 
     public List<ShopObject> getAllShops (){
         Session session = sessionFactory.openSession();
-        List<ShopObject> allShops = (List<ShopObject>) session.createQuery(
-                        " FROM ShopObject ")
-                .list();
+        Transaction transaction = session.beginTransaction();
+
+        List<ShopObject> allShops = new ArrayList<>();
+
+        for(Object shop : session.createQuery("FROM ShopObject ").list())
+            allShops.add((ShopObject) shop);
+
+
+        transaction.commit();
         session.close();
         return allShops;
     }
 
 
-//    public List<UserObject> getAllUsers() {
-//        Session session = sessionFactory.openSession();
-//        List<UserObject> allUsers = (List<UserObject>) session.createQuery(
-//                        " FROM UserObject ")
-//                .list();
-//        session.close();
-//        return allUsers;
-//    }
-
     public List<DiscountObject> getAllDiscounts() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        List<DiscountObject> discounts = new ArrayList<>();
-        List temp = session.createQuery("FROM DiscountObject ").list();
-        for(Object d : temp)
-            discounts.add((DiscountObject) d);
+
+        List<DiscountObject> allDiscounts = new ArrayList<>();
+
+        for(Object discount : session.createQuery("FROM DiscountObject ").list())
+            allDiscounts.add((DiscountObject) discount);
+
+
         transaction.commit();
         session.close();
-        return discounts;
+        return allDiscounts;
     }
 
 
@@ -163,15 +164,19 @@ public class Persist {
         List<DiscountObject> allDiscounts = getAllDiscounts();
         List<HashMap> finalList = new ArrayList<>();
 
+        OrganizationObject organization = new OrganizationObject();
             for(DiscountObject discount : allDiscounts) {
                 if (!discount.isValidForEveryone()) {
                     for (Object discountOrgObject : session.createQuery("FROM DiscountOrganization WHERE discount =:discount")
-                            .setParameter("discount", discount).list()) ;
+                            .setParameter("discount", discount).list()) {
+                        organization =(OrganizationObject) discountOrgObject;}
 
                 }
                 HashMap temp = new HashMap();
                 temp.put("discount",discount);
+                temp.put("organization",organization.getOrganizationName());
                 temp.put("shop",discount.getDiscountShop());
+
                 finalList.add(temp);
 
             }
@@ -181,68 +186,26 @@ public class Persist {
         return finalList;
     }
 
-   /* public List<UserObject> getAllUsers() {
-        Session session = sessionFactory.openSession();
-        List<UserObject> allUsers = (List<UserObject>) session.createQuery(
-                        " FROM UserObject ")
-                .list();
-        session.close();
-        return allUsers;
-    }*/
-
-    public List<DiscountObject> getAllDiscountsForUser(String token) {
+    public List<DiscountObject> getDiscountForOneShop(String token, int shopId) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
         UserObject user = getUserByToken(token);
-        Set<DiscountObject> finalList = null;
 
+        List finalList = null;
         if (user != null) {
-            Set<OrganizationObject> userOrganizations = user.getOrganizations();
-            finalList = new HashSet<DiscountObject>(session.createQuery("FROM DiscountObject WHERE validForEveryone = true").list());
-            for (Object saleOrgObject : session.createQuery("FROM DiscountOrganization ").list()) {
-                if(userOrganizations.contains(((DiscountOrganization)saleOrgObject).getOrganization())){
-                    finalList.add(((DiscountOrganization) saleOrgObject).getDiscount());
-                }
-            }
+            finalList = session.createQuery("FROM DiscountObject WHERE discountShop.id = :shopId ORDER BY id ")
+                    .setParameter("shopId", shopId).list();
         }
         transaction.commit();
         session.close();
-        return (List<DiscountObject>) finalList;
+        return finalList;
     }
-
-
-    /*public List<ArrayList<String>> getAllDOS(){
-        List<ArrayList<String>> dos = new ArrayList<>();
-        List<OrganizationObject> organizations = getAllOrganizations();
-
-        for(OrganizationObject organization : organizations){
-            ArrayList<String> list = new ArrayList<>();
-
-            List<DiscountObject> discountList= (List<DiscountObject>) organization.getDiscounts();
-            for(DiscountObject discount : discountList){
-                String discountShop= discount.getDiscountShop();
-                String discountText= discount.getDiscount();
-                String discountOrganization= organization.getOrganizationName();
-
-
-                list.add(discountText);
-                list.add(discountOrganization);
-                list.add(discountShop);
-
-                dos.add(list);
-            }
-
-        }
-        return dos;
-    }*/
 
     public void addUserToOrganization(String token, int organizationId){
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        UserObject user = (UserObject)
-                session.createQuery("FROM UserObject WHERE token =: token ")
-                        .setParameter("token", token).getSingleResult();
+        UserObject user = getUserByToken(token);
         OrganizationObject organization = session.load(OrganizationObject.class, organizationId);
         if(user != null && organization != null){
             user.getOrganizations().add(organization);
@@ -255,9 +218,7 @@ public class Persist {
     public void deleteUserFromOrganization(String token, int organizationId){
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        UserObject user = (UserObject)
-                session.createQuery("FROM UserObject WHERE token =: token ")
-                        .setParameter("token", token).getSingleResult();
+        UserObject user = getUserByToken(token);
         OrganizationObject organization = session.load(OrganizationObject.class, organizationId);
         if(user != null && organization != null){
             user.getOrganizations().remove(organization);
@@ -267,47 +228,71 @@ public class Persist {
         session.close();
     }
 
-
-    public List<OrganizationObject> getAllOrganizationsForUser(String token) {
-        UserObject user = getUserByToken(token);
-        List<OrganizationObject> organizations = this.getAllOrganizations();
-        for (OrganizationObject organization : organizations) {
-            if (!user.getOrganizations().contains(organization)) { organization.setMember(false); }
-            else { organization.setMember(true);}
-        }
-        return organizations;
-    }
-
-    /*public void addDiscountToOrganization(int discountId, int organizationId){
+   public List<HashMap> getAllOrganizationsForUser(String token) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        DiscountObject discount = (DiscountObject)
-                session.createQuery("FROM DiscountObject WHERE discountId =: discountId ")
-                        .setParameter("discountId", discountId).getSingleResult();
 
-        OrganizationObject organization = (OrganizationObject)
-                session.createQuery("FROM OrganizationObject WHERE organizationId =: organizationId ")
-                .setParameter("organizationId", organizationId).getSingleResult();
+        UserObject user = getUserByToken(token);
+        List<HashMap> organizationsList = new ArrayList<>();
 
-        if(discount != null && organization != null){
-            organization.getDiscounts().add(discount);
+        if(user != null){
+            Set<OrganizationObject> userOrganizations = user.getOrganizations();
+            List<OrganizationObject> organizations = session.createQuery("FROM OrganizationObject").list();
+            for(OrganizationObject organization : organizations){
+                HashMap temp = new HashMap();
+                temp.put("organization", organization);
+                temp.put("isAMember", userOrganizations.contains(organization));
+                organizationsList.add(temp);
+            }
+        }
+
+        transaction.commit();
+        session.close();
+        return organizationsList;
+    }
+
+    public List<HashMap> getAllDiscountsForUser(String token) {
+
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        UserObject user = getUserByToken(token);
+        List<DiscountObject> discounts = session.createQuery("FROM DiscountObject ").list();
+        List<HashMap> allDiscounts = new ArrayList<>();
+
+        if(user != null){
+            OrganizationObject organization = new OrganizationObject();
+            for(DiscountObject discount : discounts) {
+                for (Object disOrg : session.createQuery("FROM DiscountOrganization WHERE discount =:discount")
+                        .setParameter("discount", discount).list()) {
+                    organization =(OrganizationObject) disOrg;
+
+                }
+                HashMap temp = new HashMap();
+                temp.put("discount",discount.getDiscount());
+                temp.put("organization",organization.getOrganizationName());
+                temp.put("shop",discount.getDiscountShop());
+                allDiscounts.add(temp);
+            }
         }
         transaction.commit();
         session.close();
-    }*/
-    public Set<UserObject> getUsersForOneSale(int discountId) {
+        return allDiscounts;
+    }
+
+    public Set<UserObject> getUsersForOneDiscount(int id) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
         Set<UserObject> users = new HashSet<>();
-        DiscountObject discount = session.load(DiscountObject.class, discountId);
+        DiscountObject discount = session.load(DiscountObject.class, id);
 
         if(discount.isValidForEveryone()) {
             users.addAll(session.createQuery("FROM UserObject ").list());
         }
         else {
-            List discountOrganization = session.createQuery("FROM DiscountObject WHERE discountId = :discountId")
-                    .setParameter("discountId", discountId).list();
+            List discountOrganization = session.createQuery("FROM DiscountObject WHERE id = :id")
+                    .setParameter("id", id).list();
             for (Object saleOrg : discountOrganization) {
                 users.addAll(((DiscountOrganization) saleOrg).getOrganization().getUsers());
             }
@@ -317,55 +302,7 @@ public class Persist {
         session.close();
         return users;
     }
-/*
 
-    public List<UserObject> getUsersToSendDiscountNotification (DiscountObject discount) {
-        List<UserObject> userObjectList = null;
-        List<UserObject> userObjects;
-        OrganizationObject organization = (OrganizationObject) discount.getOrganizations();
-         userObjectList.addAll(organization.getUsers());
-        userObjects =  removeDuplicates(userObjectList);;
-     return userObjects;
-    }
-*/
 
-    public static <T> ArrayList<T> removeDuplicates(List<UserObject> list) {
-
-        ArrayList<T> newList = new ArrayList<T>();
-
-        // Traverse through the first list
-        for (UserObject element : list) {
-            // If this element is not present in newList
-            // then add it
-            if (!newList.contains(element)) {
-                newList.add((T) element);
-            }
-        }
-        // return the new list
-        return newList;
-
-    }
-
-    public List<DiscountObject> getStartDiscount(){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH");
-        java.util.Date date = new java.util.Date();
-        String currentDate = formatter.format(date);
-        Session session = sessionFactory.openSession();
-        List discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
-                .setParameter("currentDate",currentDate).list();
-        session.close();
-        return discounts;
-    }
-    public List<DiscountObject> getEndSDiscount(){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH");
-        java.util.Date date = new Date();
-        String currentDate = formatter.format(date);
-        Session session = sessionFactory.openSession();
-        List<DiscountObject> discounts =session.createQuery("FROM DiscountObject  WHERE discountStart =:currentDate")
-                .setParameter("currentDate",currentDate)
-                .list();
-        session.close();
-        return discounts;
-    }
 
 }

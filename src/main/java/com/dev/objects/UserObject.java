@@ -14,7 +14,7 @@ public class UserObject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    public int userId;
+    public int id;
 
     @Column
     private String username;
@@ -44,15 +44,13 @@ public class UserObject {
     private Set<OrganizationObject> organizations = new HashSet<>();
 
 
+    public UserObject() {}
     public UserObject(String username, String password) {
         this.username= username;
         this.password= password;
         this.token = Utils.createHash(username, password);
     }
 
-    public UserObject() {
-
-    }
 
     public String getUsername() {
         return username;
@@ -78,13 +76,8 @@ public class UserObject {
         this.token = token;
     }
 
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int UserId) {
-        this.userId = UserId;
+    public int getId() {
+        return id;
     }
 
     public Set<OrganizationObject> getOrganizations() {

@@ -13,8 +13,6 @@ public class Utils {
     public static String createHash (String username, String password) {
         String myHash = null;
         try {
-            String hash = "35454B055CC325EA1AF2126E27707052";
-
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update((username + password).getBytes());
             byte[] digest = md.digest();

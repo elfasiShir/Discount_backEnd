@@ -22,40 +22,28 @@ import javax.persistence.*;
         private DiscountObject discount;
 
 
-
-        public DiscountOrganization() { }
-
-        public DiscountOrganization(OrganizationObject organization, DiscountObject discount) {
-            this.organization = organization;
-            this.discount = discount;
-        }
-
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
+        public DiscountOrganization(int id) {
             this.id = id;
         }
-
-        public OrganizationObject getOrganization() {
-            return organization;
-        }
-
-        public void setOrganization(OrganizationObject organization) {
+        public DiscountOrganization(int id, OrganizationObject organization, DiscountObject discount) {
+            this.id = id;
             this.organization = organization;
-        }
-
-        public DiscountObject getDiscount() {
-            return discount;
-        }
-
-        public void setDiscount(DiscountObject discount) {
             this.discount = discount;
         }
 
+        public DiscountOrganization() {
+
+        }
+
+
+        //Getters
+        public int getId() { return id; }
+        public OrganizationObject getOrganization() { return organization; }
+        public DiscountObject getDiscount() { return discount; }
+
+        //Setters
+        public void setOrganization(OrganizationObject organization) { this.organization = organization; }
+        public void setDiscount(DiscountObject discount) { this.discount = discount; }
+
+
     }
-
-
-

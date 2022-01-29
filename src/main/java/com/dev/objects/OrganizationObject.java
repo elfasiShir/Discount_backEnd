@@ -13,14 +13,14 @@ public class OrganizationObject  {
 
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    public int organizationId;
+    private int id;
 
-    @Column
+    @Column(name = "organizationName")
     private String organizationName;
-
     @Transient
+
     boolean member;
 
 
@@ -51,24 +51,32 @@ public class OrganizationObject  {
 //    @JsonIgnoreProperties("organizations")
 //    private Set<DiscountObject> discounts = new HashSet<>();
 
-    //contactor
-    public OrganizationObject (OrganizationObject organizations){
-        this.organizationId = organizations.getOrganizationId();
-        this.organizationName = organizations.getOrganizationName();
+
+    //Constructors
+
+    public OrganizationObject(int id, String organizationName) {
+        this.id = id;
+        this.organizationName = organizationName;
     }
 
     public OrganizationObject() {
 
     }
 
+    public int getId() {
+        return id;
+    }
 
-    public int getOrganizationId() {return organizationId; }
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-    public void setOrganizationId(int organizationId) { this.organizationId = organizationId; }
+    public Set<UserObject> getUsers() { return users; }
 
-    public String getOrganizationName() { return organizationName; }
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
-    public void setOrganizationName(String organizationName) { this.organizationName = organizationName; }
 
     public boolean isMember() {
         return member;
@@ -79,13 +87,6 @@ public class OrganizationObject  {
     }
 
 
-    public Set<UserObject> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<UserObject> users) {
-        this.users = users;
-    }
 
 //    public Set<DiscountObject> getDiscounts() {
 //        return discounts;

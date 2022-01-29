@@ -14,17 +14,18 @@ import java.util.Set;
 @Table(name = "discounts")
 public abstract class DiscountObject {
 
+
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    public int discountId;
+    private int id;
 
     @Column
     private String discount;
 
 
     @Column
-    private String discountShop;
+    private ShopObject discountShop;
 
 
     @Column
@@ -57,19 +58,15 @@ public abstract class DiscountObject {
 //    @JsonIgnoreProperties("discounts")
 //    private Set<OrganizationObject> organizations = new HashSet<>();
 
-    public DiscountObject(String discount, String discountShop){
+    public DiscountObject(String discount, ShopObject discountShop){
         this.discount = discount;
         this.discountShop = discountShop;
     }
     public DiscountObject(){}
 
-    public int getDiscountId() {
-        return discountId;
-    }
+    public int getId() {return id;}
 
-    public void setDiscountId(int discountId) {
-        this.discountId = discountId;
-    }
+    public void setId(int id) {this.id = id;}
 
     public String getDiscount() {
         return discount;
@@ -79,11 +76,11 @@ public abstract class DiscountObject {
         this.discount = discount;
     }
 
-    public String getDiscountShop() {
+    public ShopObject getDiscountShop() {
         return discountShop;
     }
 
-    public void setDiscountShop(String discountShop) {
+    public void setDiscountShop(ShopObject discountShop) {
         this.discountShop = discountShop;
     }
 
@@ -111,6 +108,8 @@ public abstract class DiscountObject {
     public void setValidForEveryone(boolean validForEveryone) {
         this.validForEveryone = validForEveryone;
     }
+
+
 //
 //    public Set<OrganizationObject> getOrganizations() {
 //        return organizations;

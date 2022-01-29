@@ -4,12 +4,10 @@ import com.dev.Persist;
 import com.dev.objects.DiscountObject;
 import com.dev.objects.OrganizationObject;
 import com.dev.objects.ShopObject;
-import com.dev.objects.UserObject;
 import com.dev.utils.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
@@ -59,8 +57,8 @@ public class TestController {
         return persist.getAllDiscountsForTable();
     }
     @RequestMapping(value ="get_all_discounts_for_user" , method = RequestMethod.GET)
-    public List<DiscountObject> getAllDiscountsForUser(String token)  {
-        return (List<DiscountObject>) persist.getAllDiscountsForUser(token);
+    public List<HashMap> getAllDiscountsForUser(String token)  {
+        return (List<HashMap>) persist.getAllDiscountsForUser(token);
     }
 
     @RequestMapping(value ="get_organization_by_id" , method = RequestMethod.GET)
@@ -96,7 +94,7 @@ public class TestController {
 //        persist.addDiscountToOrganization(discountId, organizationId);
 //    }
     @RequestMapping(value ="get_all_organizations_for_user" , method = RequestMethod.GET)
-    public List<OrganizationObject> getAllOrganizationsForUser(String token) {
+    public List<HashMap> getAllOrganizationsForUser(String token) {
         return persist.getAllOrganizationsForUser(token);
     }
 
@@ -118,7 +116,7 @@ public class TestController {
             @Override
             public void run() {
                 try {
-                    messagesHandler.sendStartDiscountNotifications(persist.getUsersForOneSale(discount.getDiscountId()), discount);
+                    messagesHandler.sendStartDiscountNotifications(persist.getUsersForOneDiscount(discount.getId()), discount);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -128,7 +126,7 @@ public class TestController {
             @Override
             public void run() {
                 try {
-                    messagesHandler.sendEndDiscountNotifications(persist.getUsersForOneSale(discount.getDiscountId()), discount);
+                    messagesHandler.sendEndDiscountNotifications(persist.getUsersForOneDiscount(discount.getId()), discount);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
