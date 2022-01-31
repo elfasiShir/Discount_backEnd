@@ -24,7 +24,8 @@ public abstract class DiscountObject {
     private String discount;
 
 
-    @Column
+    @JoinColumn
+    @ManyToOne
     private ShopObject discountShop;
 
 

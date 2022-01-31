@@ -2,7 +2,6 @@ package com.dev.objects;
 import javax.persistence.*;
 
 
-@Embeddable
 @Entity
 @Table(name= "shops")
 public class ShopObject {
